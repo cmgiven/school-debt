@@ -1,0 +1,166 @@
+File name=sdf98d1e.txt, 1997-1998
+Number of Variables=129
+Number of Observations= 15,728 
+Release: 1e, May 2005
+This is a tab-delimited file.  All finance data are in whole dollars.
+
+Position	Variable Name	Type	Variable Description
+1		LEAID	        Char	NCES 7 DIGIT LOCAL EDUCATION AGENCY ID
+2		CENSUSID	Char	CENSUS 14 DIGIT GOVT ID 
+3		FIPST	        Char	FIPS STATE NUMBER
+4		FIPSCO	        Char	FIPS COUNTY NUMBER
+5		CMSA	        Char	CMSA/PMSA/MSA CODE – digits 1 and 2 are ‘00’ or the code for the 
+                                        Consolidated Metropolitan Statistical Area; digits 3-6 are either the PMSA or 
+                                        MSA code as appropriate.
+6		NAME	        Char	NAME OF LOCAL EDUCATION AGENCY
+7		STNAME	        Char	STATE NAME
+8		STABBR	        Char	STATE ABBREVIATION 
+9		SCHLEV	        Char	SCHOOL LEVEL CODE  
+                                        01   Elementary School System only  
+                                        02   Secondary School System only  
+                                        03   Elementary-Secondary School System  
+                                        05   Vocational or Special Education School System  
+                                        06   Non-Operating School System  
+                                        07   Education Service Agency
+10		AGCHRT	        Char	AGENCY CHARTER CODE
+                                        1    All associated schools are charter schools	
+                                        2    All associated schools are charter and non-charter schools
+                                        3    All associated schools are non-charter schools
+                                        N    Not applicable or code could not be determined
+11		YEAR	        Char	YEAR OF DATA 
+12		CCDNF	        Char	CCD AGENCY NONFISCAL FILE MATCH   
+                                        0    Does not match CCD Local Education Agency Universe file  
+                                        1    Matches CCD Local Education Agency Universe file
+13		CENFILE	        Char	CENSUS FISCAL FILE MATCH  
+                                        0    Does not match Census fiscal file  
+                                        1    Matches Census fiscal file
+14		GSLO	        Char	AGENCY LOW GRADE OFFERED
+15		GSHI	        Char	AGENCY HIGH GRADE OFFERED 
+16		V33	        Num	FALL MEMBERSHIP
+17		TOTALREV	Num	TOTAL REVENUE 
+                                        (equals TFEDREV + TSTREV + TLOCREV)
+18		TFEDREV	        Num	TOTAL FEDERAL REVENUE 
+                                        (equals C14 + C15 + C16 + C17 + C18 + C19 + C20 + C25 + C36 + B10 + 
+                                        B11 + B12 + B13)
+19		C14	        Num	FED REV - THRU STATE - TITLE I
+20		C15	        Num	FED REV - THRU STATE - CHILDREN WITH DISABILITIES - IDEA
+21		C16	        Num	FED REV - THRU STATE - EISENHOWER MATH AND SCIENCE
+22		C17	        Num	FED REV - THRU STATE - DRUG FREE SCHOOLS 
+23		C18	        Num	FED REV - THRU STATE - TITLE VI
+24		C19	        Num	FED REV - THRU STATE - VOCATIONAL EDUCATION
+25		C20	        Num	FED REV - THRU STATE - OTHER
+26		C25	        Num	FED REV - THRU STATE - CHILD NUTRITION ACT
+27		C36	        Num	FED REV - NONSPECIFIED
+28		B10	        Num	FED REV - DIRECT - IMPACT AID
+29		B11	        Num	FED REV - DIRECT - BILINGUAL EDUCATION
+30		B12	        Num	FED REV - DIRECT - INDIAN EDUCATION
+31		B13	        Num	FED REV - DIRECT - OTHER
+32		TSTREV	        Num	TOTAL STATE REVENUE 
+                                        (equals C01 + C04 + C05 + C06 + C07 + C08 + C09 + C10 + C11+ C12 + 
+                                        C13 + C35 + C38 + C39) 
+33		C01	        Num	STATE REV - GENERAL FORMULA ASSISTANCE
+34		C04	        Num	STATE REV - STAFF IMPROVEMENT PROGRAMS
+35		C05	        Num	STATE REV - SPECIAL EDUCATION PROGRAMS 
+36		C06	        Num	STATE REV - COMPENSATORY AND BASIC SKILLS PROGRAMS
+37		C07	        Num	STATE REV - BILINGUAL EDUCATION PROGRAMS
+38		C08	        Num	STATE REV - GIFTED AND TALENTED PROGRAMS
+39		C09	        Num	STATE REV - VOCATIONAL EDUCATION PROGRAMS
+40		C10	        Num	STATE REV - SCHOOL LUNCH PROGRAMS
+41		C11	        Num	STATE REV - CAPITAL OUTLAY AND DEBT SERVICES PROGRAMS
+42		C12	        Num	STATE REV - TRANSPORTATION PROGRAMS
+43		C13	        Num	STATE REV - OTHER PROGRAMS
+44		C35	        Num	STATE REV - NONSPECIFIED
+45		C38	        Num	STATE REV ON BEHALF - EMPLOYEE BENEFITS
+46		C39	        Num	STATE REV ON BEHALF - NOT EMPLOYEE BENEFITS
+47		TLOCREV	        Num	TOTAL LOCAL REVENUE 
+                                        (equals T02 + T06 + T09 + T15 + T40 + T99 + D11 + D23 + A07 + A08 + 
+                                        A09 + A11 + A13 + A15 + A20 + U22 + U97 + C24)
+48		T02	        Num	LOCAL REV - PARENT GOVERNMENT CONTRIBUTIONS (DEPENDENT SCHOOL SYSTEMS)
+49		T06	        Num	LOCAL REV - PROPERTY TAXES
+50		T09	        Num	LOCAL REV - GENERAL SALES TAXES
+51		T15	        Num	LOCAL REV - PUBLIC UTILITY TAXES
+52		T40	        Num	LOCAL REV - INDIVIDUAL AND CORPORATE INCOME TAXES
+53		T99	        Num	LOCAL REV - ALL OTHER TAXES
+54		D11	        Num	LOCAL REV - FROM OTHER SCHOOL SYSTEMS
+55		D23	        Num	LOCAL REV - FROM CITIES AND COUNTIES
+56		A07	        Num	LOCAL REV - TUITION FEES FROM PUPILS AND PARENTS
+57		A08	        Num	LOCAL REV - TRANSPORTATION FEES FROM PUPILS AND PARENTS
+58		A09	        Num	LCOAL REV - SCHOOL LUNCH
+59		A11	        Num	LOCAL REV - TEXTBOOK SALES AND RENTALS
+60		A13	        Num	LOCAL REV - STUDENT ACTIVITY RECEIPTS
+61		A15	        Num	LOCAL REV - STUDENTS FEES, NONSPECIFIED
+62		A20	        Num	LOCAL REV - OTHER SALES AND SERVICES
+63		U22	        Num	LOCAL REV - INTEREST EARNINGS
+64		U97	        Num	LOCAL REV - MISCELLANEOUS
+65		C24	        Num	NCES LOCAL REVENUE, CENSUS STATE REVENUE 
+66		TOTALEXP	Num	TOTAL EXPENDITURES 
+                                        (equals TCURELSC + NONELSEC + TCAPOUT + L12 + M12 + Q11 + I86)
+67		TCURELSC	Num	TOTAL CURRENT EXP FOR ELSEC EDUCATION
+                                        (equals TCURINST + TCURSSVC + TCUROTH)
+68		TCURINST	Num	TOTAL CURRENT EXP - INSTRUCTION (equals E13)
+69		E13	        Num	CURRENT EXP - INSTRUCTION
+70		V91	        Num	PAYMENTS TO PRIVATE SCHOOLS
+71		V92   	        Num	PAYMENTS TO PUBLIC CHARTER SCHOOLS
+72		TCURSSVC	Num	TOTAL CURRENT EXP - SUPPORT SERVICES 
+                                        (equals E17 + E07 + E08 + E09 + V40 + V45 + V90 + V85)
+73		E17	        Num	CURRENT EXP - SUPPORT SERVICES - PUPILS
+74		E07	        Num	CURRENT EXP - SUPPORT SERVICES - INSTRUCTIONAL STAFF
+75		E08	        Num	CURRENT EXP - SUPPORT SERVICES - GENERAL ADMINISTRATION
+76		E09	        Num	CURRENT EXP - SUPPORT SERVICES - SCHOOL ADMINISTRATION
+77		V40	        Num	CURRENT EXP - SUPPORT SERVICES - OPERATION AND MAINTENANCE OF PLANT
+78		V45	        Num	CURRENT EXP - SUPPORT SERVICES - STUDENT TRANSPORTATION
+79		V90	        Num	CURRENT EXP - SUPPORT SERVICES BUSINESS/CENTRAL/OTHER
+80		V85	        Num	CURRENT EXP - SUPPORT SERVICES NONSPECIFIED
+81		TCUROTH	        Num	TOTAL CURRENT EXPENDITURES - OTHER ELSEC 
+                                        (equals E11 + V60 + V65)
+82		E11	        Num	CURRENT EXP - FOOD SERVICES 
+83		V60	        Num	CURRENT EXP - ENTERPRISE OPERATIONS
+84		V65	        Num	CURRENT EXP - OTHER ELSEC
+85		NONELSEC	Num	TOTAL NON-ELSEC EXPENDITURES
+                                        (equals V70 + V75 + V80)
+86		V70	        Num	NON-ELSEC EXP - COMMUNITY SERVICES 
+87		V75	        Num	NON-ELSEC EXP - ADULT EDUCATION 
+88		V80	        Num	NON-ELSEC EXP - OTHER
+89		TCAPOUT	        Num	TOTAL CAPITAL OUTLAY EXPENDITURES
+                                        (equals F12 + G15 + K09 + K10 + K11)
+90		F12	        Num	CAPITAL OUTLAY - CONSTRUCTION
+91		G15	        Num	CAPITAL OUTLAY - LAND AND EXISTING STRUCTURES
+92		K09	        Num	CAPITAL OUTLAY - INSTRUCTIONAL EQUIPMENT
+93		K10	        Num	CAPITAL OUTLAY - OTHER EQUIPMENT
+94		K11	        Num	CAPITAL OUTLAY - NONSPECIFIED EQUIPMENT
+95		L12	        Num	PAYMENTS TO STATE GOVERNMENTS
+96		M12	        Num	PAYMENTS TO LOCAL GOVERNMENTS
+97		Q11	        Num	PAYMENTS TO OTHER SCHOOL SYSTEMS 
+98		I86	        Num	INTEREST ON DEBT
+99		Z32	        Num	TOTAL SALARIES
+100		Z33	        Num	SALARIES - INSTRUCTION
+101		V11	        Num	SALARIES - SUPPORT SERVICES - PUPILS
+102		V13	        Num	SALARIES - SUPPORT SERVICES - INSTRUCTIONAL STAFF
+103		V15	        Num	SALARIES - SUPPORT SERVICES - GENERAL ADMINISTRATION
+104		V17	        Num	SALARIES - SUPPORT SERVICES - SCHOOL ADMINISTRATION
+105		V21	        Num	SALARIES - SUPPORT SERVICES - OPERATION AND MAINTENANCE OF PLANT
+106		V23	        Num	SALARIES - SUPPORT SERVICES - STUDENT TRANSPORTATION
+107		V37	        Num	SALARIES - SUPPORT SERVICES - BUSINESS/CENTRAL/OTHER
+108		V29	        Num	SALARIES - FOOD SERVICES
+109		Z34	        Num	TOTAL EMPLOYEE BENEFITS
+110		V10	        Num	EMPL BENEFITS - INSTRUCTION
+111		V12	        Num	EMPL BENEFITS - SUPPORT SERVICES - PUPILS
+112		V14	        Num	EMPL BENEFITS - SUPPORT SERVICES - INSTRUCTIONAL STAFF 
+113		V16	        Num	EMPL BENEFITS - SUPPORT SERVICES - GENERAL ADMINISTRATION
+114		V18	        Num	EMPL BENEFITS - SUPPORT SERVICES - SCHOOL ADMINISTRATION
+115		V22	        Num	EMPL BENEFITS - SUPPORT SERVICES - OPERATION AND MAINTENANCE OF PLANT
+116		V24	        Num	EMPL BENEFITS - SUPPORT SERVICES - STUDENT TRANSPORTATION
+117		V38	        Num	EMPL BENEFITS - SUPPORT SERVICES - BUSINESS/CENTRAL/OTHER
+118		V30	        Num	EMPL BENEFITS - FOOD SERVICES
+119		V32	        Num	EMPL BENEFITS - ENTERPRISE OPERATIONS
+120		_19H	        Num	LONG TERM DEBT - OUTSTANDING AT BEGINNING OF FISCAL YEAR
+121		_21F	        Num	LONG TERM DEBT - ISSUED DURING FISCAL YEAR
+122		_31F	        Num	LONG TERM DEBT - RETIRED DURING FISCAL YEAR
+123		_41F	        Num	LONG TERM DEBT - OUTSTANDING AT END OF FISCAL YEAR 
+124		_61V	        Num	SHORT TERM DEBT - OUTSTANDING AT BEGINNING OF FISCAL YEAR 
+125		_66V	        Num	SHORT TERM DEBT - OUTSTANDING AT END OF FISCAL YEAR 
+126		W01	        Num	ASSETS - SINKING FUND
+127		W31	        Num	ASSETS - BOND FUND 
+128		W61	        Num	ASSETS - OTHER FUNDS 
+129		WEIGHT	        Num	WEIGHT
+

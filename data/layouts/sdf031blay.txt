@@ -1,0 +1,325 @@
+  File name=sdf031b.txt, Fiscal year 2003
+  Number of Variables=232
+  Number of Observations= 16,342
+  Release: 1b, September 2007
+  This is a tab-delimited file.  All finance data are in whole dollars.
+  
+  Order  	Variable name		Type	  	Variable Description 
+
+  1         	LEAID           	Char      	NCES 7 DIGIT AGENCY ID (LEAID)
+  2         	CENSUSID        	Char      	CENSUS 14 DIGIT GOVT ID
+  3         	FIPST           	Char      	FIPS STATE NUMBER
+  4         	CONUM           	Char      	FIPS COUNTY NUMBER –  digits 1 and 2 are FIPS state numbers; digits 
+							3-5 are FIPS numbers for county within the state
+  5         	CSA             	Char      	CONSOLIDATED STATISTICAL AREA
+  6         	CBSA            	Char      	CORE-BASED STATISTICAL AREA
+  7         	NAME            	Char      	NAME OF LOCAL EDUCATION AGENCY
+  8         	STNAME          	Char      	STATE NAME
+  9         	STABBR          	Char      	STATE ABBREVIATION
+ 10         	SCHLEV          	Char      	SCHOOL LEVEL CODE
+  							01    Elementary School System only
+ 							02    Secondary School System only
+ 							03    Elementary-Secondary School System
+							05    Vocational or Special Education School System
+  							06    Non-Operating School System
+ 							07    Education Service Agency 
+ 11         	AGCHRT          	Char      	AGENCY CHARTER CODE
+  							1    All associated schools are charter schools
+  							2    All associated schools are charter and noncharter schools
+							3    All associated schools are noncharter schools
+							N    Not applicable or code could not be determined 
+ 12         	YEAR            	Char      	YEAR OF DATA
+ 13         	CCDNF           	Char      	CCD AGENCY NONFISCAL FILE MATCH
+    							0    Does not match CCD Local Education Agency Universe file
+							1    Matches CCD Local Education Agency Universe file					
+ 14         	CENFILE         	Char      	CENSUS FISCAL FILE MATCH
+							0    Does not match Census fiscal file
+							1    Matches Census fiscal file
+ 15         	GSLO            	Char      	AGENCY LOW GRADE OFFERED
+ 16         	GSHI            	Char      	AGENCY HIGH GRADE OFFERED
+ 17         	V33             	Num       	FALL MEMBERSHIP
+ 18         	TOTALREV        	Num       	TOTAL REVENUE
+							(equals TFEDREV + TSTREV + TLOCREV)
+ 19         	TFEDREV         	Num       	TOTAL FEDERAL REVENUE
+							(equals C14 + C15 + C16 + C17 + C18 + C19 + C20 + C25 + C36 + 
+								B10 + B11 + B12 + B13)
+ 20         	C14             	Num       	FED REV - THRU STATE - TITLE I
+ 21         	C15             	Num       	FED REV - THRU STATE - CHILDREN WITH DISABILITIES - IDEA
+ 22         	C16             	Num       	FED REV - THRU STATE - MATH, SCIENCE AND PROFESSIONAL                            	          						DEVELOPMENT
+ 23         	C17             	Num       	FED REV - THRU STATE - SAFE AND DRUG FREE SCHOOLS
+ 24         	C18             	Num       	FED REV - THRU STATE - TITLE V, PART A
+ 25         	C19             	Num       	FED REV - THRU STATE - VOCATIONAL AND TECH EDUCATION
+ 26         	C20             	Num       	FED REV - THRU STATE - OTHER
+ 27         	C25             	Num       	FED REV - THRU STATE - CHILD NUTRITION ACT
+ 28         	C36             	Num       	FED REV - NONSPECIFIED
+ 29         	B10             	Num       	FED REV - DIRECT - IMPACT AID
+ 30         	B11             	Num       	FED REV - DIRECT - BILINGUAL EDUCATION
+ 31         	B12             	Num       	FED REV - DIRECT - INDIAN EDUCATION
+ 32         	B13             	Num       	FED REV - DIRECT - OTHER
+ 33         	TSTREV          	Num       	TOTAL STATE REVENUE
+							(equals C01 + C04 + C05 + C06 + C07 + C08 + C09 + C10 + C11+ 
+								C12 +	C13 + C35 + C38 + C39) 
+ 34         	C01             	Num       	STATE REV - GENERAL FORMULA ASSISTANCE
+ 35         	C04             	Num       	STATE REV - STAFF IMPROVEMENT PROGRAMS
+ 36         	C05             	Num       	STATE REV - SPECIAL EDUCATION PROGRAMS
+ 37         	C06             	Num       	STATE REV - COMPENSATORY AND BASIC SKILLS PROGRAMS
+ 38         	C07             	Num       	STATE REV - BILINGUAL EDUCATION PROGRAMS
+ 39         	C08             	Num       	STATE REV - GIFTED AND TALENTED PROGRAMS
+ 40         	C09             	Num       	STATE REV - VOCATIONAL EDUCATION PROGRAMS
+ 41         	C10             	Num       	STATE REV - SCHOOL LUNCH PROGRAMS
+ 42         	C11             	Num       	STATE REV - CAPITAL OUTLAY AND DEBT SERVICES PROGRAMS
+ 43         	C12             	Num       	STATE REV - TRANSPORTATION PROGRAMS
+ 44         	C13             	Num       	STATE REV - OTHER PROGRAMS
+ 45         	C35             	Num       	STATE REV - NONSPECIFIED
+ 46         	C38             	Num       	STATE REV ON BEHALF - EMPLOYEE BENEFITS
+ 47         	C39             	Num       	STATE REV ON BEHALF - NOT EMPLOYEE BENEFITS
+ 48         	TLOCREV         	Num       	TOTAL LOCAL REVENUE
+							(equals T02 + T06 + T09 + T15 + T40 + T99 + D11 + D23 + A07 + 
+								A08 + A09 + A11 + A13 + A15 + A20 + U22 + U97 + C24)
+ 49         	T02             	Num       	LOCAL REV - PARENT GOVERNMENT CONTRIBUTIONS
+            	                	          	(DEPENDENT SCHOOL SYSTEMS)
+ 50         	T06             	Num       	LOCAL REV - PROPERTY TAXES
+ 51         	T09             	Num       	LOCAL REV - GENERAL SALES TAXES
+ 52         	T15             	Num       	LOCAL REV - PUBLIC UTILITY TAXES
+ 53         	T40             	Num       	LOCAL REV - INDIVIDUAL AND CORPORATE INCOME TAXES
+ 54         	T99             	Num       	LOCAL REV - ALL OTHER TAXES
+ 55         	D11             	Num       	LOCAL REV - FROM OTHER SCHOOL SYSTEMS
+ 56         	D23             	Num       	LOCAL REV - FROM CITIES AND COUNTIES
+ 57         	A07             	Num       	LOCAL REV - TUITION FEES FROM PUPILS AND PARENTS
+ 58         	A08             	Num       	LOCAL REV - TRANSPORTATION FEES FROM PUPILS AND PARENTS
+ 59         	A09             	Num       	LOCAL REV - SCHOOL LUNCH
+ 60         	A11             	Num       	LOCAL REV - TEXTBOOK SALES AND RENTALS
+ 61         	A13             	Num       	LOCAL REV - STUDENT ACTIVITY RECEIPTS
+ 62         	A15             	Num       	LOCAL REV - STUDENT FEES, NONSPECIFIED
+ 63         	A20             	Num       	LOCAL REV - OTHER SALES AND SERVICES
+ 64         	U22             	Num       	LOCAL REV - INTEREST EARNINGS
+ 65         	U97             	Num       	LOCAL REV - MISCELLANEOUS
+ 66         	C24             	Num       	NCES LOCAL REVENUE, CENSUS STATE REVENUE
+ 67         	TOTALEXP        	Num       	TOTAL EXPENDITURES
+							(equals TCURELSC + TNONELSE + TCAPOUT + L12 + M12 + Q11 + I86)
+ 68         	TCURELSC        	Num       	TOTAL CURRENT EXP FOR ELSEC EDUCATION
+							(equals TCURINST + TCURSSVC + TCUROTH)
+ 69         	TCURINST        	Num       	TOTAL CURRENT EXP - INSTRUCTION
+							(equals E13)
+ 70         	E13             	Num       	CURRENT EXP - INSTRUCTION
+ 71         	V91             	Num       	PAYMENTS TO PRIVATE SCHOOLS
+ 72         	V92             	Num       	PAYMENTS TO PUBLIC CHARTER SCHOOLS
+ 73         	TCURSSVC        	Num       	TOTAL CURRENT EXP - SUPPORT SERVICES
+							(equals E17 + E07 + E08 + E09 + V40 + V45 + V90 + V85)
+ 74         	E17             	Num       	CURRENT EXP - SUPPORT SERVICES - PUPILS
+ 75         	E07             	Num       	CURRENT EXP - SUPPORT SERVICES - INSTRUCTIONAL STAFF
+ 76         	E08             	Num       	CURRENT EXP - SUPPORT SERVICES - GENERAL ADMINISTRATION
+ 77         	E09             	Num       	CURRENT EXP - SUPPORT SERVICES - SCHOOL ADMINISTRATION
+ 78         	V40             	Num       	CURRENT EXP - SUPPORT SERVICES - OPERATION AND
+            	                	          	MAINTENANCE OF PLANT
+ 79         	V45             	Num       	CURRENT EXP - SUPPORT SERVICES - STUDENT TRANSPORTATION
+ 80         	V90             	Num       	CURRENT EXP - SUPPORT SERVICES - BUSINESS/CENTRAL/OTHER
+ 81         	V85             	Num       	CURRENT EXP - SUPPORT SERVICES NONSPECIFIED
+ 82         	TCUROTH         	Num       	TOTAL CURRENT EXPENDITURES - OTHER ELSEC
+							(equals E11 + V60 + V65)
+ 83         	E11             	Num       	CURRENT EXP - FOOD SERVICES
+ 84         	V60             	Num       	CURRENT EXP - ENTERPRISE OPERATIONS
+ 85         	V65             	Num       	CURRENT EXP - OTHER ELSEC
+ 86         	TNONELSE        	Num       	TOTAL NON-ELSEC EXPENDITURES
+							(equals V70 + V75 + V80)
+ 87         	V70             	Num       	NON-ELSEC EXP - COMMUNITY SERVICES
+ 88         	V75             	Num       	NON-ELSEC EXP - ADULT EDUCATION
+ 89         	V80             	Num       	NON-ELSEC EXP - OTHER
+ 90         	TCAPOUT         	Num       	TOTAL CAPITAL OUTLAY EXPENDITURES
+							(equals F12 + G15 + K09 + K10 + K11)
+ 91         	F12             	Num       	CAPITAL OUTLAY - CONSTRUCTION
+ 92         	G15             	Num       	CAPITAL OUTLAY - LAND AND EXISTING STRUCTURES
+ 93         	K09             	Num       	CAPITAL OUTLAY - INSTRUCTIONAL EQUIPMENT
+ 94         	K10             	Num       	CAPITAL OUTLAY - OTHER EQUIPMENT
+ 95         	K11             	Num       	CAPITAL OUTLAY - NONSPECIFIED EQUIPMENT
+ 96         	L12             	Num       	PAYMENTS TO STATE GOVERNMENTS
+ 97         	M12             	Num       	PAYMENTS TO LOCAL GOVERNMENTS
+ 98         	Q11             	Num       	PAYMENTS TO OTHER SCHOOL SYSTEMS
+ 99         	I86             	Num       	INTEREST ON DEBT
+100         	Z32             	Num       	TOTAL SALARIES
+101         	Z33             	Num       	SALARIES - INSTRUCTION
+102         	V11             	Num       	SALARIES - SUPPORT SERVICES - PUPILS
+103         	V13             	Num       	SALARIES - SUPPORT SERVICES - INSTRUCTIONAL STAFF
+104         	V15             	Num       	SALARIES - SUPPORT SERVICES - GENERAL ADMINISTRATION
+105         	V17             	Num       	SALARIES - SUPPORT SERVICES - SCHOOL ADMINISTRATION
+106         	V21             	Num       	SALARIES - SUPPORT SERVICES - OPERATION AND 
+            	                	          	MAINTENANCE OF PLANT
+107         	V23             	Num       	SALARIES - SUPPORT SERVICES - STUDENT TRANSPORTATION
+108         	V37             	Num       	SALARIES - SUPPORT SERVICES - BUSINESS/CENTRAL/OTHER
+109         	V29             	Num       	SALARIES - FOOD SERVICE
+110         	Z34             	Num       	TOTAL EMPLOYEE BENEFITS
+111         	V10             	Num       	EMPL BENEFITS - INSTRUCTION
+112         	V12             	Num       	EMPL BENEFITS - SUPPORT SERVICES - PUPILS
+113         	V14             	Num       	EMPL BENEFITS - SUPPORT SERVICES - INSTRUCTIONAL STAFF
+114         	V16             	Num       	EMPL BENEFITS - SUPPORT SERVICES - GENERAL ADMINISTRATION
+115         	V18             	Num       	EMPL BENEFITS - SUPPORT SERVICES - SCHOOL ADMINISTRATION
+116         	V22             	Num       	EMPL BENEFITS - SUPPORT SERVICES - OPERATION AND 
+                                      			MAINTENANCE OF PLANT
+117         	V24             	Num       	EMPL BENEFITS - SUPPORT SERVICES - STUDENT TRANSPORTATION
+118         	V38             	Num       	EMPL BENEFITS - SUPPORT SERVICES - BUSINESS/CENTRAL/OTHER
+119         	V30             	Num       	EMPL BENEFITS - FOOD SERVICES
+120         	V32             	Num       	EMPL BENEFITS - ENTERPRISE OPERATIONS
+121         	_19H            	Num       	LONG TERM DEBT - OUTSTANDING AT BEGINNING OF FISCAL YEAR
+122         	_21F            	Num       	LONG TERM DEBT - ISSUED DURING FISCAL YEAR
+123         	_31F            	Num       	LONG TERM DEBT - RETIRED DURING FISCAL YEAR
+124         	_41F            	Num       	LONG TERM DEBT - OUTSTANDING AT END OF FISCAL YEAR
+125         	_61V            	Num       	SHORT TERM DEBT - OUTSTANDING AT BEGINNING OF FISCAL YEAR
+126         	_66V            	Num       	SHORT TERM DEBT - OUTSTANDING AT END OF FISCAL YEAR
+127         	W01             	Num       	ASSETS - SINKING FUND
+128         	W31             	Num       	ASSETS - BOND FUND
+129         	W61             	Num       	ASSETS - OTHER FUNDS
+130         	WEIGHT          	Num       	WEIGHT
+131         	FL_V33          	Char      	FLAG - FALL MEMBERSHIP
+132         	FL_C14          	Char      	FLAG - FED REV - THRU STATE - TITLE I
+133         	FL_C15          	Char      	FLAG - FED REV - THRU STATE - CHILDREN WITH 
+							DISABILITIES - IDEA
+134         	FL_C16          	Char      	FLAG - FED REV - THRU STATE - MATH, SCIENCE,
+            	                	          	AND PROFESSIONAL DEVELOPMENT
+135         	FL_C17          	Char      	FLAG - FED REV - THRU STATE - SAFE AND DRUG FREE SCHOOLS
+136         	FL_C18          	Char      	FLAG - FED REV - THRU STATE - TITLE V, PART A
+137         	FL_C19          	Char      	FLAG - FED REV - THRU STATE - VOCATIONAL AND 
+            	                	          	TECH EDUCATION
+138         	FL_C20          	Char      	FLAG - FED REV - THRU STATE - OTHER
+139         	FL_C25          	Char      	FLAG - FED REV - THRU STATE - CHILD NUTRITION ACT
+140         	FL_C36          	Char      	FLAG - FED REV - NONSPECIFIED
+141         	FL_B10          	Char      	FLAG - FED REV - DIRECT - IMPACT AID
+142         	FL_B11          	Char      	FLAG - FED REV - DIRECT - BILINGUAL EDUCATION
+143         	FL_B12          	Char      	FLAG - FED REV - DIRECT - INDIAN EDUCATION
+144         	FL_B13          	Char      	FLAG - FED REV - DIRECT - OTHER
+145         	FL_C01          	Char      	FLAG - STATE REV - GENERAL FORMULA ASSISTANCE
+146         	FL_C04          	Char      	FLAG - STATE REV - STAFF IMPROVEMENT PROGRAMS
+147         	FL_C05          	Char      	FLAG - STATE REV - SPECIAL EDUCATION PROGRAMS
+148         	FL_C06          	Char      	FLAG - STATE REV - COMPENSATORY AND BASIC SKILLS PROGRAMS
+149         	FL_C07          	Char      	FLAG - STATE REV - BILINGUAL EDUCATION PROGRAMS
+150         	FL_C08          	Char      	FLAG - STATE REV - GIFTED AND TALENTED PROGRAMS
+151         	FL_C09          	Char      	FLAG - STATE REV - VOCATIONAL EDUCATION PROGRAMS
+152         	FL_C10          	Char      	FLAG - STATE REV - SCHOOL LUNCH PROGRAMS
+153         	FL_C11          	Char      	FLAG - STATE REV - CAPITAL OUTLAY
+            	                	          	AND DEBT SERVICES PROGRAMS
+154         	FL_C12          	Char      	FLAG - STATE REV - TRANSPORTATION PROGRAMS
+155         	FL_C13          	Char      	FLAG - STATE REV - OTHER PROGRAMS
+156         	FL_C35          	Char      	FLAG - STATE REV - NONSPECIFIED
+157         	FL_C38          	Char      	FLAG - STATE REV ON BEHALF - EMPLOYEE BENEFITS
+158         	FL_C39          	Char      	FLAG - STATE REV ON BEHALF - NOT EMPLOYEE BENEFITS
+159         	FL_T02          	Char      	FLAG - LOCAL REV - PARENT GOVERNMENT CONTRIBUTIONS
+            	                	          	(DEPENDENT SCHOOL SYSTEMS)
+160         	FL_T06          	Char      	FLAG - LOCAL REV - PROPERTY TAXES
+161         	FL_T09          	Char      	FLAG - LOCAL REV - GENERAL SALES TAXES
+162         	FL_T15          	Char      	FLAG - LOCAL REV - PUBLIC UTILITY TAXES
+163         	FL_T40          	Char      	FLAG - LOCAL REV - INDIVIDUAL AND CORPORATE INCOME TAXES
+164         	FL_T99          	Char      	FLAG - LOCAL REV - ALL OTHER TAXES
+165         	FL_D11          	Char      	FLAG - LOCAL REV - FROM OTHER SCHOOL SYSTEMS
+166         	FL_D23          	Char      	FLAG - LOCAL REV - FROM CITIES AND COUNTIES
+167         	FL_A07          	Char      	FLAG - LOCAL REV - TUITION FEES FROM PUPILS AND PARENTS
+168         	FL_A08          	Char      	FLAG - LOCAL REV - TRANSPORTATION
+            	                	          	FEES FROM PUPILS AND PARENTS
+169         	FL_A09          	Char      	FLAG - LOCAL REV - SCHOOL LUNCH
+170         	FL_A11          	Char      	FLAG - LOCAL REV - TEXTBOOK SALES AND RENTALS
+171         	FL_A13          	Char      	FLAG - LOCAL REV - STUDENT ACTIVITY RECEIPTS
+172         	FL_A15          	Char      	FLAG - LOCAL REV - STUDENT FEES, NONSPECIFIED
+173         	FL_A20          	Char      	FLAG - LOCAL REV - OTHER SALES AND SERVICES
+174         	FL_U22          	Char      	FLAG - LOCAL REV - INTEREST EARNINGS
+175         	FL_U97          	Char      	FLAG - LOCAL REV - MISCELLANEOUS
+176         	FL_C24          	Char      	FLAG - NCES LOCAL REVENUE, CENSUS STATE REVENUE
+177         	FL_E13          	Char      	FLAG - CURRENT EXP - INSTRUCTION
+178         	FL_V91          	Char      	FLAG - PAYMENTS TO PRIVATE SCHOOLS
+179         	FL_V92          	Char      	FLAG - PAYMENTS TO PUBLIC CHARTER SCHOOLS
+180         	FL_E17          	Char      	FLAG - CURRENT EXP - SUPPORT SERVICES - PUPILS
+181         	FL_E07          	Char      	FLAG - CURRENT EXP - SUPPORT SERVICES
+            	                	    		- INSTRUCTIONAL STAFF
+182         	FL_E08          	Char      	FLAG - CURRENT EXP - SUPPORT SERVICES
+            	                	          	- GENERAL ADMINISTRATION
+183         	FL_E09          	Char      	FLAG - CURRENT EXP - SUPPORT SERVICES
+            	                          		- SCHOOL ADMINISTRATION
+184         	FL_V40          	Char      	FLAG - CURRENT EXP - SUPPORT SERVICES
+            	                	   		- OPERATION AND MAINTENANCE OF PLANT
+185         	FL_V45          	Char      	FLAG - CURRENT EXP - SUPPORT SERVICES
+            	                	          	- STUDENT TRANSPORTATION
+186         	FL_V90          	Char      	FLAG - CURRENT EXP - SUPPORT SERVICES
+            	                	          	- BUSINESS/CENTRAL/OTHER
+187         	FL_V85          	Char      	FLAG - CURRENT EXP - SUPPORT SERVICES NONSPECIFIED
+188         	FL_E11          	Char      	FLAG - CURRENT EXP - FOOD SERVICES
+189         	FL_V60          	Char      	FLAG - CURRENT EXP - ENTERPRISE OPERATIONS
+190         	FL_V65          	Char      	FLAG - CURRENT EXP - OTHER ELSEC
+191         	FL_V70          	Char      	FLAG - NON-ELSEC EXP - COMMUNITY SERVICES
+192         	FL_V75          	Char      	FLAG - NON-ELSEC EXP - ADULT EDUCATION
+193         	FL_V80          	Char      	FLAG - NON-ELSEC EXP - OTHER
+194         	FL_F12          	Char      	FLAG - CAPITAL OUTLAY - CONSTRUCTION
+195         	FL_G15          	Char      	FLAG - CAPITAL OUTLAY - LAND AND EXISTING STRUCTURES
+196         	FL_K09          	Char      	FLAG - CAPITAL OUTLAY - INSTRUCTIONAL EQUIPMENT
+197         	FL_K10          	Char      	FLAG - CAPITAL OUTLAY - OTHER EQUIPMENT
+198         	FL_K11          	Char      	FLAG - CAPITAL OUTLAY - NONSPECIFIED EQUIPMENT
+199         	FL_L12          	Char      	FLAG - PAYMENTS TO STATE GOVERNMENTS
+200         	FL_M12          	Char      	FLAG - PAYMENTS TO LOCAL GOVERNMNETS
+201         	FL_Q11          	Char      	FLAG - PAYMENTS TO OTHER SCHOOL SYSTEMS
+202         	FL_I86          	Char      	FLAG - INTEREST ON DEBT
+203         	FL_Z32          	Char      	FLAG - TOTAL SALARIES
+204         	FL_Z33          	Char      	FLAG - SALARIES - INSTRUCTION
+205         	FL_V11          	Char      	FLAG - SALARIES - SUPPORT SERVICES - PUPILS
+206         	FL_V13          	Char      	FLAG - SALARIES - SUPPORT SERVICES - INSTRUCTIONAL STAFF
+207         	FL_V15          	Char      	FLAG - SALARIES - SUPPORT SERVICES
+            	                	          	- GENERAL ADMINISTRATION
+208         	FL_V17          	Char      	FLAG - SALARIES - SUPPORT SERVICES - SCHOOL ADMINISTRATION
+209         	FL_V21          	Char      	FLAG - SALARIES - SUPPORT SERVICES - OPERATION AND
+            	                          		MAINTENANCE OF PLANT
+210         	FL_V23          	Char      	FLAG - SALARIES - SUPPORT SERVICES - STUDENT 
+            	                	         	TRANSPORTATION
+211         	FL_V37          	Char      	FLAG - SALARIES - SUPPORT SERVICES - 
+            	                	         	- BUSINESS/CENTRAL/OTHER
+212         	FL_V29          	Char      	FLAG - SALARIES - FOOD SERVICE
+213         	FL_Z34          	Char      	FLAG - TOTAL EMPLOYEE BENEFITS
+214         	FL_V10          	Char      	FLAG - EMPL BENEFITS - INSTRUCTION
+215         	FL_V12          	Char      	FLAG - EMPL BENEFITS - SUPPORT SERVICES - PUPILS
+216         	FL_V14          	Char      	FLAG - EMPL BENEFITS - SUPPORT
+            	                	          	SERVICES - INSTRUCTIONAL STAFF
+217         	FL_V16          	Char      	FLAG - EMPL BENEFITS - SUPPORT SERVICES
+            	                	          	- GENERAL ADMINISTRATION
+218         	FL_V18          	Char      	FLAG - EMPL BENEFITS - SUPPORT SERVICES
+                                	      		- SCHOOL ADMINISTRATION
+219         	FL_V22          	Char      	FLAG - EMPL BENEFITS - SUPPORT SERVICES
+            	                          		- OPERATION AND MAINTENANCE OF PLANT
+220         	FL_V24          	Char      	FLAG - EMPL BENEFITS - SUPPORT SERVICES
+            	                	          	- STUDENT TRANSPORTATION
+221         	FL_V38          	Char      	FLAG - EMPL BENEFITS - SUPPORT SERVICES
+            	                	          	- BUSINESS/CENTRAL/OTHER
+222         	FL_V30          	Char      	FLAG - EMPL BENEFITS - FOOD SERVICES
+223         	FL_V32          	Char      	FLAG - EMPL BENEFITS - ENTERPRISE OPERATIONS
+224         	FL_19H          	Char      	FLAG - LONG TERM DEBT - OUTSTANDING AT BEGINNING
+            	                	          	OF FISCAL YEAR
+225         	FL_21F          	Char      	FLAG - LONG TERM DEBT - ISSUED DURING FISCAL YEAR
+226         	FL_31F          	Char      	FLAG - LONG TERM DEBT - RETIRED DURING FISCAL YEAR
+227         	FL_41F          	Char      	FLAG - LONG TERM DEBT - OUTSTANDING AT END OF FISCAL YEAR
+228         	FL_61V          	Char      	FLAG - SHORT TERM DEBT - OUTSTANDING AT BEGINNING 
+            	                	          	OF FISCAL YEAR
+229         	FL_66V          	Char      	FLAG - SHORT TERM DEBT - OUTSTANDING AT END OF FISCAL YEAR
+230         	FL_W01          	Char      	FLAG - ASSETS - SINKING FUND
+231         	FL_W31          	Char      	FLAG - ASSETS - BOND FUND
+232         	FL_W61          	Char      	FLAG - ASSETS - OTHER FUNDS
+            	   		
+            	   		
+            	   		
+            	   		
+        			
+        			
+        			
+        			
+        			
+        			
+        			
+        		
+        		
+        	
+        	
+       	
+       	
+      	
+      	
+      	
+      	
+      	
+      	
+      	
+      	
+      	
+      	
+      
