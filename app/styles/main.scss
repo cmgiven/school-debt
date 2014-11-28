@@ -43,9 +43,6 @@ h1 {
 }
 
 #main {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 15px;
 }
 
 header {
@@ -80,6 +77,24 @@ header {
 #state-selector {
   button {
     width: 180px;
+  }
+}
+
+#compare {
+  height: 320px;
+  @media screen and (min-width: 1200px) {
+    width: 50%;
+    float: left;
+    height: 450px;
+  }
+}
+
+#bars {
+  height: 400px;
+  @media screen and (min-width: 1200px) {
+    width: 50%;
+    float: left;
+    height: 450px;
   }
 }
 
