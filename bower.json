@@ -1,0 +1,9 @@
+{
+  "name": "school-debt",
+  "private": true,
+  "dependencies": {
+    "jquery": "~2.1.1",
+    "d3": "~3.4.13",
+    "lodash": "~2.4.1"
+  }
+}
