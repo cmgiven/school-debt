@@ -10,10 +10,19 @@ html {
 
 body {
   background: #161616;
-  font-family: 'Lato', Helvetica, Arial, sans-serif;
   color: #ddd;
+  font-family: 'Lato', Helvetica, Arial, sans-serif;
   font-size: 17px;
   line-height: 1.5em;
+}
+
+button {
+  font-family: inherit;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
 }
 
 h1 {
@@ -21,6 +30,7 @@ h1 {
   font-size: 42px;
   font-weight: 300;
   letter-spacing: 5px;
+  line-height: 1.1em
 }
 
 .loading {
@@ -42,6 +52,129 @@ header {
   text-align: center;
 }
 
+#controls {
+  text-align: center;
+  & > div {
+    display: inline-block;
+    padding: 7px 5px 3px 15px;
+    margin: 5px 5px;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #000;
+    transition: background-color .4s ease;
+    &:hover {
+      background: #1c020b;
+    }
+    &.selected {
+      background: #8b0a35;
+    }
+  }
+}
+
+#year-selector {
+  button {
+    width: 105px;
+  }
+}
+
+#state-selector {
+  button {
+    width: 180px;
+  }
+}
+
+label {
+  padding-right: 8px;
+  cursor: pointer;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+  button {
+    position: relative;
+    top: -2px;
+    color: #ddd;
+    background-color: #1a1a1a;
+    display: inline-block;
+    padding: 11px 15px;
+    margin-bottom: 0;
+    font-size: 17px;
+    font-weight: 400;
+    text-align: left;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: none;
+    border-radius: 6px;
+    transition: color .4s ease;
+    outline: none !important;
+
+    span.caret {
+      width: 0;
+      height: 0;
+      position: relative;
+      float: right;
+      top: 9px;
+      margin: 0 1px 0 6px;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 4px solid #ddd;
+      transition: border-top-color .4s ease;
+    }
+
+    &:hover {
+      color: #fff;
+      span.caret { border-top-color: #fff; }
+    }
+  }
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    top: 32px;
+    z-index: 1000;
+    display: none;
+    float: left;
+    width: 100%;
+    max-height: 320px;
+    overflow: scroll;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 14px;
+    text-align: left;
+    list-style: none;
+    background-color: #ddd;
+    color: #161616;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    a {
+      display: block;
+      padding: 0 15px;
+      &.selected {
+        font-weight: 900;
+      }
+      &:hover {
+        background-color: #8b0a35;
+        color: #ddd;
+      }
+    }
+  }
+}
+
+.open > .dropdown-menu {
+  display: block;
+}
+
 .spinner {
   display: inline-block;
   height: 30px;
@@ -53,8 +186,6 @@ header {
     height: 100%;
     width: 3px;
     display: inline-block;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
     border-radius: 3px;
     
     -webkit-animation: stretchdelay 1.2s infinite ease-in-out;
