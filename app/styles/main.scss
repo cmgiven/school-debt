@@ -28,8 +28,18 @@ h1 {
   left: 33.33%; top: 50%;
   margin: -125px 0 0 -107px;
   width: 320px; height: 250px;
-  padding: 15px;
+  padding: 0 15px;
   text-align: left;
+}
+
+#main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+header {
+  text-align: center;
 }
 
 .spinner {

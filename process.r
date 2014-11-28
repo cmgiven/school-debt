@@ -1,3 +1,5 @@
+#!/usr/bin/env Rscript
+
 library(jsonlite)
 
 readtsv <- function(filename) {
@@ -37,11 +39,11 @@ for (collection in sdf) {
   if ('AGCHRT' %in% colnames(collection)) {
     rows <- subset(collection,
                      !is.na(LEAID) & (AGCHRT == 2 | AGCHRT == 3 | (YEAR = 98 & AGCHRT == 'N')),
-                     select = c(LEAID, NAME, STABBR, YEAR, TOTALREV, X_41F, X_66V))
+                     select = c(LEAID, NAME, STNAME, YEAR, TOTALREV, X_41F, X_66V))
   } else {
     rows <- subset(collection,
                      !is.na(LEAID),
-                     select = c(LEAID, NAME, STABBR, YEAR, TOTALREV, X_41F, X_66V))
+                     select = c(LEAID, NAME, STNAME, YEAR, TOTALREV, X_41F, X_66V))
   }
   
   data <- rbind(data, rows)
@@ -87,7 +89,7 @@ data$TOTALDEBT <- round(adj2011dollars(data$TOTALDEBT, data$YEAR))
 #   matches$YEAR <- as.numeric(levels(matches$YEAR))[matches$YEAR]
 #   obj <- list(ID = unbox(leaid),
 #               NAME = unbox(matches$NAME[1]),
-#               STATE = unbox(as.character(matches$STABBR[1])),
+#               STATE = unbox(as.character(matches$STNAME[1])),
 #               VALUES = matches[,names(data) %in% c('YEAR', 'TOTALREV', 'TOTALDEBT')])
 #   return(obj)
 # }))
@@ -100,11 +102,11 @@ usSums <- merge(usTotalRev, usTotalDebt, by = 'YEAR')
 
 export <- toJSON(list(
   VALUES = usSums,
-  STATES = lapply(unique(data$STABBR), function(state) {
-    matches <- data[data$STABBR==state,]
+  STATES = lapply(unique(data$STNAME), function(state) {
+    matches <- data[data$STNAME==state,]
     matches$YEAR <- as.numeric(levels(matches$YEAR))[matches$YEAR]
     
-    state <- as.character(matches$STABBR[1])
+    state <- as.character(matches$STNAME[1])
     stateTotalRev <- aggregate(matches$TOTALREV, list(YEAR = matches$YEAR), sum)
     names(stateTotalRev)[2] <- 'TOTALREV'
     stateTotalDebt <- aggregate(matches$TOTALDEBT, list(YEAR = matches$YEAR), sum)
@@ -125,4 +127,4 @@ export <- toJSON(list(
     return(obj)
   })))
 
-cat(export, file = 'data.json')
+cat(export, file = 'app/data/data.json')
