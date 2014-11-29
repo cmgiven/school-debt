@@ -150,17 +150,118 @@
     LineChart = function (el, owner) {
         this.owner = owner;
         this.$el = $(el);
-        this.properties = {
-            width: this.$el.width(),
-            height: this.$el.height()
-        };
-        this.svg = d3.select(el).append('svg')
-            .attr('width', this.properties.width)
-            .attr('height', this.properties.height);
+        this.svg = d3.select(el).append('svg').classed('line-chart', true);
+
+        this.drawAll();
+    };
+
+    LineChart.prototype.drawBackground = function () {
+        var x, y, xAxis, yAxis, canvas, linePath,
+            owner = this.owner,
+            globals = owner.globals,
+            svg = this.svg,
+            margin = {top: 22, right: 30, bottom: 22, left: 50},
+            width = this.$el.width() - margin.left - margin.right,
+            height = this.$el.height() - margin.top - margin.bottom;
+
+        svg.attr('width', width + margin.left + margin.right)
+            .attr('height', height + margin.top + margin.bottom);
+
+        svg.select('g.canvas').remove();
+        canvas = svg.append('g')
+            .classed('canvas', true)
+            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+        x = d3.scale.ordinal()
+            .rangeBands([0, width], 0)
+            .domain(globals.available.years);
+
+        y = d3.scale.linear()
+            .range([height, 0])
+            .domain([0, 1]);
+
+        function yearTicks(years) {
+            var i,
+                interval = width > 400 ? 2 : 4,
+                offset = (years.length % interval) - 1,
+                arr = [];
+
+            for (i = offset; i < years.length; i += interval) {
+                arr.push(years[i]);
+            }
+
+            return arr;
+        }
+
+        xAxis = d3.svg.axis()
+            .scale(x)
+            .orient('bottom')
+            .tickValues(yearTicks(globals.available.years));
+
+        yAxis = d3.svg.axis()
+            .scale(y)
+            .orient('left')
+            .ticks(5)
+            .tickFormat(d3.format('%'))
+            .tickSize(-width, 0, 0);
+
+        linePath = d3.svg.line()
+            .x(function (d) { return x(d.YEAR) + (x.rangeBand() / 2); })
+            .y(function (d) { return y(d.TOTALDEBT / d.TOTALREV); });
+
+        canvas.append('g')
+            .attr('class', 'x axis')
+            .attr('transform', 'translate(0,' + height + ')')
+            .call(xAxis);
+
+        canvas.append('g')
+            .attr('class', 'y axis')
+            .call(yAxis);
+
+        canvas.append("path")
+            .datum(owner.data.VALUES)
+            .attr("class", "line")
+            .attr("d", linePath);
+
+        canvas.selectAll('.year')
+            .data(globals.available.years)
+            .enter().append('rect')
+            .attr('id', function (d) { return 'yearrect-' + d; })
+            .attr('class', function (d) { return d === globals.selected.year ? 'year selected' : 'year'; })
+            .attr('x', function (d) { return x(d); })
+            .attr('width', x.rangeBand())
+            .attr('y', 0)
+            .attr('height', height)
+            .on('mouseover', function (d) {
+                d3.select(this).classed('hover', true);
+            })
+            .on('mouseout', function (d) {
+                d3.select(this).classed('hover', false);
+            })
+            .on('click', function (d) {
+                owner.updateSelected('year', d);
+            });
+    };
+
+    LineChart.prototype.drawData = function (transition) {
+        var line = this.line;
+    };
+
+    LineChart.prototype.drawAll = function () {
+        this.drawBackground();
+        this.drawData();
     };
 
     LineChart.prototype.update = function (key, value) {
-        //
+        switch (key) {
+        case 'year':
+            this.svg.selectAll('.year').classed('selected', false);
+            this.svg.select('#yearrect-' + value).classed('selected', true);
+            break;
+        case 'state':
+            this.drawData(true);
+            break;
+        }
     };
 
     Map = function (el, owner) {

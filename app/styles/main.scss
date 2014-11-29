@@ -199,6 +199,40 @@ a.label {
   display: block;
 }
 
+.line-chart {
+  .axis path,
+  .axis line {
+    fill: none;
+    stroke: #333;
+    stroke-width: 2px;
+    shape-rendering: crispEdges;
+  }
+
+  .line {
+    fill: none;
+    stroke: #8b0a35;
+    stroke-width: 4px;
+  }
+
+  .x.axis path, .y.axis path, .x.axis line {
+    display: none;
+  }
+
+  .year {
+    fill: transparent;
+  }
+
+  .year.selected, .year.hover {
+    fill: #1f1f1f;
+    fill: rgba(255,255,255,.02);
+  }
+
+  text {
+    fill: #999;
+    font-size: 14px;
+  }
+}
+
 /* Modified version of SpinKit */
 /* https://github.com/tobiasahlin/SpinKit */
 /* Copyright (c) 2014 Tobias Ahlin */
