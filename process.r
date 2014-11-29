@@ -39,11 +39,11 @@ for (collection in sdf) {
   if ('AGCHRT' %in% colnames(collection)) {
     rows <- subset(collection,
                      !is.na(LEAID) & (AGCHRT == 2 | AGCHRT == 3 | (YEAR = 98 & AGCHRT == 'N')),
-                     select = c(LEAID, NAME, STNAME, YEAR, TOTALREV, X_41F, X_66V))
+                     select = c(LEAID, NAME, STABBR, YEAR, TOTALREV, X_41F, X_66V))
   } else {
     rows <- subset(collection,
                      !is.na(LEAID),
-                     select = c(LEAID, NAME, STNAME, YEAR, TOTALREV, X_41F, X_66V))
+                     select = c(LEAID, NAME, STABBR, YEAR, TOTALREV, X_41F, X_66V))
   }
   
   data <- rbind(data, rows)
@@ -66,8 +66,35 @@ data$YEAR <- factor(data$YEAR,
                                2007, 2008, 2009,
                                2010, 2011))
 
+data$STATE <- factor(data$STABBR,
+                    levels = c('AL', 'AK', 'AZ', 'AR', 'CA', 'CO',
+                               'CT', 'DE', 'DC', 'FL', 'GA', 'HI',
+                               'ID', 'IL', 'IN', 'IA', 'KS', 'KY',
+                               'LA', 'ME', 'MD', 'MA', 'MI', 'MN',
+                               'MS', 'MO', 'MT', 'NE', 'NV', 'NH',
+                               'NJ', 'NM', 'NY', 'NC', 'ND', 'OH',
+                               'OK', 'OR', 'PA', 'RI', 'SC', 'SD',
+                               'TN', 'TX', 'UT', 'VT', 'VA', 'WA',
+                               'WV', 'WI', 'WY'),
+                    labels = c('Alabama', 'Alaska', 'Arizona', 'Arkansas',
+                               'California', 'Colorado', 'Connecticut',
+                               'Delaware', 'District of Columbia',
+                               'Florida', 'Georgia', 'Hawaii', 'Idaho',
+                               'Illinois', 'Indiana', 'Iowa', 'Kansas',
+                               'Kentucky', 'Louisiana', 'Maine', 'Maryland',
+                               'Massachusetts', 'Michigan', 'Minesota',
+                               'Mississippi', 'Missouri', 'Montana',
+                               'Nebraska', 'Nevada', 'New Hampshire',
+                               'New Jersey', 'New Mexico', 'New York',
+                               'North Carolina', 'North Dakota', 'Ohio',
+                               'Oklahoma', 'Oregon', 'Pennsylvania',
+                               'Rhode Island', 'South Carolina',
+                               'South Dakota', 'Tennessee', 'Texas', 'Utah',
+                               'Vermont', 'Virginia', 'Washington',
+                               'West Virginia', 'Wisconsin', 'Wyoming'))
+
 data$TOTALDEBT <- data$X_41F + data$X_66V
-data <- data[,!(names(data) %in% c('X_41F', 'X_66V'))]
+data <- data[,!(names(data) %in% c('STABBR', 'X_41F', 'X_66V'))]
 
 cpi <- read.csv('data/cpi.csv', header = FALSE, col.names = c('YEAR', 'CPI'))
 
@@ -89,7 +116,7 @@ data$TOTALDEBT <- round(adj2011dollars(data$TOTALDEBT, data$YEAR))
 #   matches$YEAR <- as.numeric(levels(matches$YEAR))[matches$YEAR]
 #   obj <- list(ID = unbox(leaid),
 #               NAME = unbox(matches$NAME[1]),
-#               STATE = unbox(as.character(matches$STNAME[1])),
+#               STATE = unbox(as.character(matches$STATE[1])),
 #               VALUES = matches[,names(data) %in% c('YEAR', 'TOTALREV', 'TOTALDEBT')])
 #   return(obj)
 # }))
@@ -102,11 +129,11 @@ usSums <- merge(usTotalRev, usTotalDebt, by = 'YEAR')
 
 export <- toJSON(list(
   VALUES = usSums,
-  STATES = lapply(unique(data$STNAME), function(state) {
-    matches <- data[data$STNAME==state,]
+  STATES = lapply(unique(data$STATE), function(state) {
+    matches <- data[data$STATE==state,]
     matches$YEAR <- as.numeric(levels(matches$YEAR))[matches$YEAR]
     
-    state <- as.character(matches$STNAME[1])
+    state <- as.character(matches$STATE[1])
     stateTotalRev <- aggregate(matches$TOTALREV, list(YEAR = matches$YEAR), sum)
     names(stateTotalRev)[2] <- 'TOTALREV'
     stateTotalDebt <- aggregate(matches$TOTALDEBT, list(YEAR = matches$YEAR), sum)
