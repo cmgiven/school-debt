@@ -76,7 +76,7 @@ header {
 
 #state-selector {
   button {
-    width: 180px;
+    width: 210px;
   }
 }
 
@@ -98,7 +98,7 @@ header {
   }
 }
 
-label {
+a.label {
   padding-right: 8px;
   cursor: pointer;
 }
@@ -106,13 +106,14 @@ label {
 .dropdown {
   position: relative;
   display: inline-block;
+
   button {
     position: relative;
     top: -2px;
     color: #ddd;
     background-color: #1a1a1a;
     display: inline-block;
-    padding: 11px 15px;
+    padding: 10px 15px 11px;
     margin-bottom: 0;
     font-size: 17px;
     font-weight: 400;
@@ -130,15 +131,14 @@ label {
     border: none;
     border-radius: 6px;
     transition: color .4s ease;
-    outline: none !important;
 
     span.caret {
       width: 0;
       height: 0;
-      position: relative;
-      float: right;
-      top: 9px;
-      margin: 0 1px 0 6px;
+      display: block;
+      position: absolute;
+      top: 20px;
+      right: 15px;
       border-left: 6px solid transparent;
       border-right: 6px solid transparent;
       border-top: 4px solid #ddd;
@@ -150,6 +150,15 @@ label {
       span.caret { border-top-color: #fff; }
     }
   }
+
+  &.open button {
+    background: #ddd;
+    color: #6e6e6e;
+    span.caret {
+      border-top-color: #6e6e6e;
+    }
+  }
+
   .dropdown-menu {
     position: absolute;
     top: 100%;
@@ -189,6 +198,11 @@ label {
 .open > .dropdown-menu {
   display: block;
 }
+
+/* Modified version of SpinKit */
+/* https://github.com/tobiasahlin/SpinKit */
+/* Copyright (c) 2014 Tobias Ahlin */
+/* MIT license */
 
 .spinner {
   display: inline-block;

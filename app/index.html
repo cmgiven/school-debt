@@ -41,42 +41,22 @@
         <h1>School Debt</h1>
       </header>
       <div id="controls">
-        <div id="year-selector" class="selected" href="#">
-          <label for="year-button">Year</label>
+        <div id="year-selector" class="selector selected" data-view="LineChart">
+          <a class="label" href="#">Year</a>
           <div class="dropdown">
             <button type="button" id="year-button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-              <span class="text">2011</span> <span class="caret"></span>
+              <span class="text">&nbsp;</span> <span class="caret"></span>
             </button>
-            <ul class="dropdown-menu" role="menu">
-              <li><a role="menuitem" href="#" class="selected">2011</a></li>
-              <li><a role="menuitem" href="#">2010</a></li>
-              <li><a role="menuitem" href="#">2009</a></li>
-              <li><a role="menuitem" href="#">2008</a></li>
-              <li><a role="menuitem" href="#">2007</a></li>
-              <li><a role="menuitem" href="#">2006</a></li>
-              <li><a role="menuitem" href="#">2005</a></li>
-              <li><a role="menuitem" href="#">2004</a></li>
-              <li><a role="menuitem" href="#">2003</a></li>
-              <li><a role="menuitem" href="#">2002</a></li>
-              <li><a role="menuitem" href="#">2001</a></li>
-              <li><a role="menuitem" href="#">2000</a></li>
-              <li><a role="menuitem" href="#">1999</a></li>
-              <li><a role="menuitem" href="#">1998</a></li>
-              <li><a role="menuitem" href="#">1997</a></li>
-              <li><a role="menuitem" href="#">1996</a></li>
-              <li><a role="menuitem" href="#">1995</a></li>
-            </ul>
+            <ul class="dropdown-menu" role="menu" data-type="year"></ul>
           </div>
         </div>
-        <div id="state-selector" href="#">
-          <label for="state-button">State</label>
+        <div id="state-selector" class="selector" data-view="Map">
+          <a class="label" href="#">State</a>
           <div class="dropdown">
             <button type="button" id="state-button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-              <span class="text">All States</span> <span class="caret"></span>
+              <span class="text">&nbsp;</span> <span class="caret"></span>
             </button>
-            <ul class="dropdown-menu" role="menu">
-              <li><a role="menuitem" href="#" class="selected">All States</a></li>
-            </ul>
+            <ul class="dropdown-menu" role="menu" data-type="state"></ul>
           </div>
         </div>
       </div>
@@ -95,6 +75,7 @@
     <!-- endbuild -->
 
     <!-- build:js scripts/main.js -->
+    <script src="scripts/plugins.js"></script>
     <script src="scripts/main.js"></script>
     <!-- endbuild -->
 

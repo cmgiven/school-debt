@@ -1,161 +1,198 @@
-/* ========================================================================
- * Bootstrap: dropdown.js v3.3.1
- * http://getbootstrap.com/javascript/#dropdowns
- * ========================================================================
- * Copyright 2011-2014 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- * ======================================================================== */
+/*jslint browser: true*/
+/*jslint nomen: true*/
+/*global $, _, d3*/
 
+(function () {
+    'use strict';
 
-+function ($) {
-  'use strict';
+    var app,
+        Controls,
+        LineChart,
+        Map,
+        BarTreemap,
 
-  // DROPDOWN CLASS DEFINITION
-  // =========================
+        DATA_PATH = 'data/data.json';
 
-  var backdrop = '.dropdown-backdrop'
-  var toggle   = '[data-toggle="dropdown"]'
-  var Dropdown = function (element) {
-    $(element).on('click.bs.dropdown', this.toggle)
-  }
+    $(function () {
+        $.ajax({
+            url: DATA_PATH,
+            dataType: 'json',
+            success: app.initialize
+        });
+    });
 
-  Dropdown.VERSION = '3.3.1'
+    app = {
+        data: {},
+        components: {
+            controls: {},
+            compare: {},
+            bars: {}
+        },
+        globals: {
+            available: { years: [], states: [] },
+            selected: { year: null, state: null },
+            view: null
+        },
 
-  Dropdown.prototype.toggle = function (e) {
-    var $this = $(this)
+        initialize: function (data) {
+            app.data = data;
 
-    if ($this.is('.disabled, :disabled')) return
+            app.globals.available.years  = _.pluck(data.VALUES, 'YEAR');
+            app.globals.available.states = _.pluck(data.STATES, 'STATE');
+            app.globals.selected.year = _.last(app.globals.available.years);
+            app.globals.selected.state = 'All States';
+            app.globals.view = 'LineChart';
 
-    var $parent  = getParent($this)
-    var isActive = $parent.hasClass('open')
+            app.components.controls = new Controls('#controls', app);
+            app.components.compare  = new LineChart('#compare', app);
+            app.components.bars     = new BarTreemap('#bars', app);
+        },
 
-    clearMenus()
+        updateSelected: function (key, value) {
+            app.globals.selected[key] = value;
 
-    if (!isActive) {
-      if ('ontouchstart' in document.documentElement && !$parent.closest('.navbar-nav').length) {
-        // if mobile we use a backdrop because click events don't delegate
-        $('<div class="dropdown-backdrop"/>').insertAfter($(this)).on('click', clearMenus)
-      }
+            _.each(app.components, function (component) {
+                component.update(key, value);
+            });
+        },
 
-      var relatedTarget = { relatedTarget: this }
-      $parent.trigger(e = $.Event('show.bs.dropdown', relatedTarget))
+        toggleView: function (newView) {
+            if (app.globals.view !== newView) {
+                $('#compare').children().remove();
+                switch (newView) {
+                case 'LineChart':
+                    app.components.compare = new LineChart('#compare', app);
+                    break;
+                case 'Map':
+                    app.components.compare = new Map('#compare', app);
+                    break;
+                }
 
-      if (e.isDefaultPrevented()) return
+                app.globals.view = newView;
+            }
+        }
+    };
 
-      $this
-        .trigger('focus')
-        .attr('aria-expanded', 'true')
+    Controls = function (el, owner) {
+        this.owner = owner;
+        this.$el = $(el);
 
-      $parent
-        .toggleClass('open')
-        .trigger('shown.bs.dropdown', relatedTarget)
-    }
+        this.populateMenus();
 
-    return false
-  }
+        function onClick(e) {
+            e.preventDefault();
 
-  Dropdown.prototype.keydown = function (e) {
-    if (!/(38|40|27|32)/.test(e.which) || /input|textarea/i.test(e.target.tagName)) return
+            if ($(e.target).parents('.dropdown').length === 0) {
+                var selector = $(e.currentTarget),
+                    view = selector.data('view');
 
-    var $this = $(this)
+                selector.siblings().removeClass('selected');
+                selector.addClass('selected');
 
-    e.preventDefault()
-    e.stopPropagation()
+                owner.toggleView(view);
+            }
+        }
 
-    if ($this.is('.disabled, :disabled')) return
+        this.$el.children().click(onClick);
+    };
 
-    var $parent  = getParent($this)
-    var isActive = $parent.hasClass('open')
+    Controls.prototype.update = function (key, value) {
+        var dropdown = this.$el.find('#' + key + '-selector .dropdown'),
+            list = dropdown.children('.dropdown-menu');
 
-    if ((!isActive && e.which != 27) || (isActive && e.which == 27)) {
-      if (e.which == 27) $parent.find(toggle).trigger('focus')
-      return $this.trigger('click')
-    }
+        list.find('a').removeClass('selected');
+        list.find('a:contains(' + value + ')').addClass('selected');
+        dropdown.find('button span.text').text(value);
+    };
 
-    var desc = ' li:not(.divider):visible a'
-    var $items = $parent.find('[role="menu"]' + desc + ', [role="listbox"]' + desc)
+    Controls.prototype.populateMenus = function () {
+        var owner = this.owner,
+            available = owner.globals.available,
+            years = _.clone(available.years).reverse(),
+            states = available.states,
+            latestYear = years[0],
+            yearList = this.$el.find('#year-selector .dropdown-menu'),
+            stateList = this.$el.find('#state-selector .dropdown-menu');
 
-    if (!$items.length) return
+        function populateMenu($el, data) {
+            _.each(data, function (item) {
+                $el.append($('<li>').append($('<a>')
+                    .attr({
+                        'role': 'menuitem',
+                        'href': '#'
+                    })
+                    .text(item)));
+            });
+        }
 
-    var index = $items.index(e.target)
+        function onClick(e) {
+            var type = $(this).data('type'),
+                value = $(e.target).text();
 
-    if (e.which == 38 && index > 0)                 index--                        // up
-    if (e.which == 40 && index < $items.length - 1) index++                        // down
-    if (!~index)                                      index = 0
+            e.preventDefault();
 
-    $items.eq(index).trigger('focus')
-  }
+            owner.updateSelected(type, value);
+        }
 
-  function clearMenus(e) {
-    if (e && e.which === 3) return
-    $(backdrop).remove()
-    $(toggle).each(function () {
-      var $this         = $(this)
-      var $parent       = getParent($this)
-      var relatedTarget = { relatedTarget: this }
+        yearList.children().remove();
+        populateMenu(yearList, years);
+        yearList.find('li:first-child a').addClass('selected');
+        this.$el.find('#year-button span.text').text(latestYear);
+        yearList.click(onClick);
 
-      if (!$parent.hasClass('open')) return
+        stateList.children().remove();
+        populateMenu(stateList, states);
+        stateList.prepend($('<li><a role="menuitem" href="#" class="selected">All States</a></li>'));
+        this.$el.find('#state-button span.text').text('All States');
+        stateList.click(onClick);
+    };
 
-      $parent.trigger(e = $.Event('hide.bs.dropdown', relatedTarget))
+    LineChart = function (el, owner) {
+        this.owner = owner;
+        this.$el = $(el);
+        this.properties = {
+            width: this.$el.width(),
+            height: this.$el.height()
+        };
+        this.svg = d3.select(el).append('svg')
+            .attr('width', this.properties.width)
+            .attr('height', this.properties.height);
+    };
 
-      if (e.isDefaultPrevented()) return
+    LineChart.prototype.update = function (key, value) {
+        //
+    };
 
-      $this.attr('aria-expanded', 'false')
-      $parent.removeClass('open').trigger('hidden.bs.dropdown', relatedTarget)
-    })
-  }
+    Map = function (el, owner) {
+        this.owner = owner;
+        this.$el = $(el);
+        this.properties = {
+            width: this.$el.width(),
+            height: this.$el.height()
+        };
+        this.svg = d3.select(el).append('svg')
+            .attr('width', this.properties.width)
+            .attr('height', this.properties.height);
+    };
 
-  function getParent($this) {
-    var selector = $this.attr('data-target')
+    Map.prototype.update = function (key, value) {
+        //
+    };
 
-    if (!selector) {
-      selector = $this.attr('href')
-      selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
-    }
+    BarTreemap = function (el, owner) {
+        this.owner = owner;
+        this.$el = $(el);
+        this.properties = {
+            width: this.$el.width(),
+            height: this.$el.height()
+        };
+        this.svg = d3.select(el).append('svg')
+            .attr('width', this.properties.width)
+            .attr('height', this.properties.height);
+    };
 
-    var $parent = selector && $(selector)
+    BarTreemap.prototype.update = function (key, value) {
+        //
+    };
 
-    return $parent && $parent.length ? $parent : $this.parent()
-  }
-
-
-  // DROPDOWN PLUGIN DEFINITION
-  // ==========================
-
-  function Plugin(option) {
-    return this.each(function () {
-      var $this = $(this)
-      var data  = $this.data('bs.dropdown')
-
-      if (!data) $this.data('bs.dropdown', (data = new Dropdown(this)))
-      if (typeof option == 'string') data[option].call($this)
-    })
-  }
-
-  var old = $.fn.dropdown
-
-  $.fn.dropdown             = Plugin
-  $.fn.dropdown.Constructor = Dropdown
-
-
-  // DROPDOWN NO CONFLICT
-  // ====================
-
-  $.fn.dropdown.noConflict = function () {
-    $.fn.dropdown = old
-    return this
-  }
-
-
-  // APPLY TO STANDARD DROPDOWN ELEMENTS
-  // ===================================
-
-  $(document)
-    .on('click.bs.dropdown.data-api', clearMenus)
-    .on('click.bs.dropdown.data-api', '.dropdown form', function (e) { e.stopPropagation() })
-    .on('click.bs.dropdown.data-api', toggle, Dropdown.prototype.toggle)
-    .on('keydown.bs.dropdown.data-api', toggle, Dropdown.prototype.keydown)
-    .on('keydown.bs.dropdown.data-api', '[role="menu"]', Dropdown.prototype.keydown)
-    .on('keydown.bs.dropdown.data-api', '[role="listbox"]', Dropdown.prototype.keydown)
-
-}(jQuery);
+}());
