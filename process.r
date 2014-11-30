@@ -131,8 +131,7 @@ export <- toJSON(list(
   VALUES = usSums,
   STATES = lapply(unique(data$STATE), function(state) {
     matches <- data[data$STATE==state,]
-    matches$YEAR <- as.numeric(levels(matches$YEAR))[matches$YEAR]
-    
+
     state <- as.character(matches$STATE[1])
     stateTotalRev <- aggregate(matches$TOTALREV, list(YEAR = matches$YEAR), sum)
     names(stateTotalRev)[2] <- 'TOTALREV'
@@ -146,9 +145,11 @@ export <- toJSON(list(
       VALUES = sums,
       LEAS = lapply(unique(matches$LEAID), function(leaid) {
         leamatches <- matches[matches$LEAID==leaid,]
+
         obj <- list(ID = unbox(leaid),
                     NAME = unbox(leamatches$NAME[1]),
                     VALUES = leamatches[,names(data) %in% c('YEAR', 'TOTALREV', 'TOTALDEBT')])
+
         return(obj)
       }))
     return(obj)
