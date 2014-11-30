@@ -36,6 +36,9 @@
         },
 
         initialize: function (data) {
+            $('#loading').fadeOut();
+            $('#main').fadeIn();
+
             app.data = data;
 
             app.globals.available.years  = _.pluck(data.VALUES, 'YEAR');
@@ -335,7 +338,7 @@
 
     BarTreemap = Exhibit.create({
         classed: 'bar-treemap',
-        title: $('<h2><span class="replace state"></span> debt and revenue totals, <span class="replace year"></span><h2>')
+        title: $('<h2><span class="replace state"></span> revenue and debt totals, <span class="replace year"></span><h2>')
     });
 
 }());

@@ -33,8 +33,22 @@ h1 {
   line-height: 1.1em
 }
 
+#compare {
+  height: 300px;
+}
+
+#bars {
+  height: 400px;
+}
+
 .exhibit {
   position: relative;
+
+  @media screen and (min-width: 980px) {
+    width: 50%;
+    float: left;
+    height: 450px !important;
+  }
 
   h2 {
     position: absolute;
@@ -53,7 +67,7 @@ h1 {
   }
 }
 
-.loading {
+#loading {
   position: absolute;
   left: 33.33%; top: 50%;
   margin: -125px 0 0 -107px;
@@ -64,6 +78,7 @@ h1 {
 
 #main {
   padding-bottom: 50px;
+  display: none;
 
   #description {
     clear: both;
@@ -103,24 +118,6 @@ header {
 #state-selector {
   button {
     width: 210px;
-  }
-}
-
-#compare {
-  height: 320px;
-  @media screen and (min-width: 1200px) {
-    width: 50%;
-    float: left;
-    height: 450px;
-  }
-}
-
-#bars {
-  height: 400px;
-  @media screen and (min-width: 1200px) {
-    width: 50%;
-    float: left;
-    height: 450px;
   }
 }
 
