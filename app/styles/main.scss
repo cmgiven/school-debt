@@ -64,6 +64,10 @@ h1 {
 
 #main {
   padding-bottom: 50px;
+
+  #description {
+    clear: both;
+  }
 }
 
 header {
@@ -247,7 +251,7 @@ a.label {
 
   .year.selected, .year:hover {
     fill: #1f1f1f;
-    fill: rgba(255,255,255,.025);
+    fill: rgba(255,255,255,.05);
   }
 
   text {
