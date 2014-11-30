@@ -156,7 +156,7 @@
     };
 
     LineChart.prototype.drawBackground = function () {
-        var x, y, xAxis, yAxis, canvas, linePath,
+        var x, y, xAxis, yAxis, canvas,
             owner = this.owner,
             globals = owner.globals,
             svg = this.svg,
@@ -173,7 +173,7 @@
             .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
         x = d3.scale.ordinal()
-            .rangeBands([0, width], 0)
+            .rangeBands([0, width], 0, 0.5)
             .domain(globals.available.years);
 
         y = d3.scale.linear()
@@ -205,7 +205,7 @@
             .tickFormat(d3.format('%'))
             .tickSize(-width, 0, 0);
 
-        linePath = d3.svg.line()
+        this.linePath = d3.svg.line()
             .x(function (d) { return x(d.YEAR) + (x.rangeBand() / 2); })
             .y(function (d) { return y(d.TOTALDEBT / d.TOTALREV); });
 
@@ -218,48 +218,57 @@
             .attr('class', 'y axis')
             .call(yAxis);
 
-        canvas.append("path")
-            .datum(owner.data.VALUES)
-            .attr("class", "line")
-            .attr("d", linePath);
+        this.line = canvas.append("path")
+            .attr("class", "line");
 
         canvas.selectAll('.year')
             .data(globals.available.years)
             .enter().append('rect')
             .attr('id', function (d) { return 'yearrect-' + d; })
-            .attr('class', function (d) { return d === globals.selected.year ? 'year selected' : 'year'; })
+            .attr('class', 'year')
             .attr('x', function (d) { return x(d); })
             .attr('width', x.rangeBand())
             .attr('y', 0)
             .attr('height', height)
-            .on('mouseover', function (d) {
-                d3.select(this).classed('hover', true);
-            })
-            .on('mouseout', function (d) {
-                d3.select(this).classed('hover', false);
-            })
             .on('click', function (d) {
                 owner.updateSelected('year', d);
             });
     };
 
-    LineChart.prototype.drawData = function (transition) {
-        var line = this.line;
+    LineChart.prototype.drawData = function () {
+        var line = this.line,
+            linePath = this.linePath,
+            owner = this.owner,
+            state = this.owner.globals.selected.state,
+            data = state === 'All States' ?
+                    owner.data.VALUES :
+                    _.find(owner.data.STATES, { 'STATE': state }).VALUES;
+
+        line.datum(data)
+            .transition()
+            .attr("d", linePath);
     };
 
     LineChart.prototype.drawAll = function () {
         this.drawBackground();
         this.drawData();
+        this.updateYear();
     };
 
-    LineChart.prototype.update = function (key, value) {
+    LineChart.prototype.updateYear = function () {
+        var year = this.owner.globals.selected.year;
+
+        this.svg.selectAll('.year').classed('selected', false);
+        this.svg.select('#yearrect-' + year).classed('selected', true);
+    };
+
+    LineChart.prototype.update = function (key) {
         switch (key) {
         case 'year':
-            this.svg.selectAll('.year').classed('selected', false);
-            this.svg.select('#yearrect-' + value).classed('selected', true);
+            this.updateYear();
             break;
         case 'state':
-            this.drawData(true);
+            this.drawData();
             break;
         }
     };

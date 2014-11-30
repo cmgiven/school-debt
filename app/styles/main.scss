@@ -43,6 +43,7 @@ h1 {
 }
 
 #main {
+  padding-bottom: 50px;
 }
 
 header {
@@ -51,6 +52,7 @@ header {
 
 #controls {
   text-align: center;
+  margin-bottom: 20px;
   & > div {
     display: inline-block;
     padding: 7px 5px 3px 15px;
@@ -220,11 +222,12 @@ a.label {
 
   .year {
     fill: transparent;
+    cursor: pointer;
   }
 
-  .year.selected, .year.hover {
+  .year.selected, .year:hover {
     fill: #1f1f1f;
-    fill: rgba(255,255,255,.02);
+    fill: rgba(255,255,255,.025);
   }
 
   text {
