@@ -7,6 +7,7 @@
 
     var app,
         Controls,
+        Exhibit,
         LineChart,
         Map,
         BarTreemap,
@@ -48,8 +49,8 @@
             app.components.bars     = new BarTreemap('#bars', app);
 
             $(window).resize(function () {
-                app.components.compare.redraw();
-                app.components.bars.redraw();
+                app.components.compare.draw();
+                app.components.bars.draw();
             });
         },
 
@@ -101,15 +102,6 @@
         this.$el.children().click(onClick);
     };
 
-    Controls.prototype.update = function (key, value) {
-        var dropdown = this.$el.find('#' + key + '-selector .dropdown'),
-            list = dropdown.children('.dropdown-menu');
-
-        list.find('a').removeClass('selected');
-        list.find('a:contains(' + value + ')').addClass('selected');
-        dropdown.find('button span.text').text(value);
-    };
-
     Controls.prototype.populateMenus = function () {
         var owner = this.owner,
             available = owner.globals.available,
@@ -152,209 +144,198 @@
         stateList.click(onClick);
     };
 
-    LineChart = function (el, owner) {
-        this.owner = owner;
-        this.$el = $(el);
-        this.svg = d3.select(el).append('svg').classed('line-chart', true);
-        this.title = $('<h2><span class="replace state"></span> debt as a share of annual revenue<h2>');
-        this.$el.append(this.title);
+    Controls.prototype.update = function (key, value) {
+        var dropdown = this.$el.find('#' + key + '-selector .dropdown'),
+            list = dropdown.children('.dropdown-menu');
 
-        this.redraw();
+        list.find('a').removeClass('selected');
+        list.find('a:contains(' + value + ')').addClass('selected');
+        dropdown.find('button span.text').text(value);
     };
 
-    LineChart.prototype.drawBackground = function () {
-        var x, y, xAxis, yAxis, canvas,
-            owner = this.owner,
-            globals = owner.globals,
-            svg = this.svg,
-            margin = {top: 22, right: 30, bottom: 76, left: 50},
-            width = this.$el.width() - margin.left - margin.right,
-            height = this.$el.height() - margin.top - margin.bottom;
+    Exhibit = function (el, owner) {
+        this.owner = owner;
+        this.$el = $(el);
+        this.svg = d3.select(el).append('svg').classed(this.classed, true);
+        this.$el.append(this.title);
 
-        svg.attr('width', width + margin.left + margin.right)
-            .attr('height', height + margin.top + margin.bottom);
+        this.draw();
+    };
 
-        svg.select('g.canvas').remove();
-        canvas = svg.append('g')
-            .classed('canvas', true)
-            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+    Exhibit.create = function (prototype) {
+        var parent = this,
+            object = function () {
+                parent.apply(this, arguments);
+            };
 
-        x = d3.scale.ordinal()
-            .rangeBands([0, width], 0, 0.5)
-            .domain(globals.available.years);
+        object.prototype = _.create(parent.prototype, prototype);
 
-        y = d3.scale.linear()
-            .range([height, 0])
-            .domain([0, 1]);
+        return object;
+    };
 
-        function yearTicks(years) {
-            var i,
-                interval = width > 400 ? 2 : 4,
-                offset = (years.length % interval) - 1,
-                arr = [];
+    Exhibit.prototype = {
+        classed: 'exhibit',
+        title: $('<h2>Exhibit<h2>'),
 
-            for (i = offset; i < years.length; i += interval) {
-                arr.push(years[i]);
+        drawBackground: function () { return; },
+        drawData: function () { return; },
+        updateYear: function () { return; },
+        updateState: function () { return; },
+
+        updateTitle: function () {
+            var selected = this.owner.globals.selected,
+                year = selected.year,
+                state = selected.state,
+                str = state === 'All States' ? '' : state;
+
+            this.title.children('span.replace.year').text(year);
+            this.title.children('span.replace.state').text(str);
+        },
+
+        draw: function () {
+            this.drawBackground();
+            this.drawData();
+            this.updateYear();
+            this.updateState();
+            this.updateTitle();
+        },
+
+        update: function (key) {
+            switch (key) {
+            case 'year':
+                this.updateYear();
+                break;
+            case 'state':
+                this.updateState();
+                break;
             }
 
-            return arr;
-        }
-
-        xAxis = d3.svg.axis()
-            .scale(x)
-            .orient('bottom')
-            .tickValues(yearTicks(globals.available.years));
-
-        yAxis = d3.svg.axis()
-            .scale(y)
-            .orient('left')
-            .ticks(5)
-            .tickFormat(d3.format('%'))
-            .tickSize(-width, 0, 0);
-
-        this.linePath = d3.svg.line()
-            .x(function (d) { return x(d.YEAR) + (x.rangeBand() / 2); })
-            .y(function (d) { return y(d.TOTALDEBT / d.TOTALREV); });
-
-        canvas.append('g')
-            .attr('class', 'x axis')
-            .attr('transform', 'translate(0,' + height + ')')
-            .call(xAxis);
-
-        canvas.append('g')
-            .attr('class', 'y axis')
-            .call(yAxis);
-
-        this.line = canvas.append("path")
-            .attr("class", "line");
-
-        canvas.selectAll('.year')
-            .data(globals.available.years)
-            .enter().append('rect')
-            .attr('id', function (d) { return 'yearrect-' + d; })
-            .attr('class', 'year')
-            .attr('x', function (d) { return x(d); })
-            .attr('width', x.rangeBand())
-            .attr('y', 0)
-            .attr('height', height)
-            .on('click', function (d) {
-                owner.updateSelected('year', d);
-            });
-    };
-
-    LineChart.prototype.drawData = function () {
-        var line = this.line,
-            linePath = this.linePath,
-            owner = this.owner,
-            state = owner.globals.selected.state,
-            data = state === 'All States' ?
-                    owner.data.VALUES :
-                    _.find(owner.data.STATES, { 'STATE': state }).VALUES;
-
-        line.datum(data)
-            .transition()
-            .attr("d", linePath);
-    };
-
-    LineChart.prototype.updateYear = function () {
-        var year = this.owner.globals.selected.year;
-
-        this.svg.selectAll('.year').classed('selected', false);
-        this.svg.select('#yearrect-' + year).classed('selected', true);
-    };
-
-    LineChart.prototype.updateState = function () {
-        var state = this.owner.globals.selected.state,
-            str = state === 'All States' ? '' : state;
-
-        this.drawData();
-        this.title.children('span.replace.state').text(str);
-    };
-
-    LineChart.prototype.redraw = function () {
-        this.drawBackground();
-        this.drawData();
-        this.updateYear();
-        this.updateState();
-    };
-
-    LineChart.prototype.update = function (key) {
-        switch (key) {
-        case 'year':
-            this.updateYear();
-            break;
-        case 'state':
-            this.updateState();
-            break;
+            this.updateTitle();
         }
     };
 
-    Map = function (el, owner) {
-        this.owner = owner;
-        this.$el = $(el);
-        this.svg = d3.select(el).append('svg').classed('map', true);
-        this.title = $('<h2>debt as a share of annual revenue, <span class="replace year"></span><h2>');
-        this.$el.append(this.title);
+    LineChart = Exhibit.create({
+        classed: 'line-chart',
+        title: $('<h2><span class="replace state"></span> debt as a share of annual revenue<h2>'),
 
-        this.redraw();
-    };
+        drawBackground: function () {
+            var x, y, xAxis, yAxis, canvas,
+                owner = this.owner,
+                globals = owner.globals,
+                svg = this.svg,
+                margin = {top: 22, right: 30, bottom: 76, left: 50},
+                width = this.$el.width() - margin.left - margin.right,
+                height = this.$el.height() - margin.top - margin.bottom;
 
-    Map.prototype.updateYear = function () {
-        var year = this.owner.globals.selected.year;
+            svg.attr('width', width + margin.left + margin.right)
+                .attr('height', height + margin.top + margin.bottom);
 
-        this.title.children('span.replace.year').text(year);
-    };
+            svg.select('g.canvas').remove();
+            canvas = svg.append('g')
+                .classed('canvas', true)
+                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-    Map.prototype.updateState = function () {
-        var state = this.owner.globals.selected.state;
-    };
+            x = d3.scale.ordinal()
+                .rangeBands([0, width], 0, 0.5)
+                .domain(globals.available.years);
 
-    Map.prototype.redraw = function () {
-        this.updateYear();
-        this.updateState();
-    };
+            y = d3.scale.linear()
+                .range([height, 0])
+                .domain([0, 1]);
 
-    Map.prototype.update = function (key, value) {
-        //
-    };
+            function yearTicks(years) {
+                var i,
+                    interval = width > 400 ? 2 : 4,
+                    offset = (years.length % interval) - 1,
+                    arr = [];
 
-    BarTreemap = function (el, owner) {
-        this.owner = owner;
-        this.$el = $(el);
-        this.svg = d3.select(el).append('svg').classed('bar-treemap', true);
-        this.title = $('<h2><span class="replace state"></span> debt and revenue totals, <span class="replace year"></span><h2>');
-        this.$el.append(this.title);
+                for (i = offset; i < years.length; i += interval) {
+                    arr.push(years[i]);
+                }
 
-        this.redraw();
-    };
+                return arr;
+            }
 
-    BarTreemap.prototype.updateYear = function () {
-        var year = this.owner.globals.selected.year;
+            xAxis = d3.svg.axis()
+                .scale(x)
+                .orient('bottom')
+                .tickValues(yearTicks(globals.available.years));
 
-        this.title.children('span.replace.year').text(year);
-    };
+            yAxis = d3.svg.axis()
+                .scale(y)
+                .orient('left')
+                .ticks(5)
+                .tickFormat(d3.format('%'))
+                .tickSize(-width, 0, 0);
 
-    BarTreemap.prototype.updateState = function () {
-        var state = this.owner.globals.selected.state,
-            str = state === 'All States' ? '' : state;
+            this.linePath = d3.svg.line()
+                .x(function (d) { return x(d.YEAR) + (x.rangeBand() / 2); })
+                .y(function (d) { return y(d.TOTALDEBT / d.TOTALREV); });
 
-        this.title.children('span.replace.state').text(str);
-    };
+            canvas.append('g')
+                .attr('class', 'x axis')
+                .attr('transform', 'translate(0,' + height + ')')
+                .call(xAxis);
 
-    BarTreemap.prototype.redraw = function () {
-        this.updateYear();
-        this.updateState();
-    };
+            canvas.append('g')
+                .attr('class', 'y axis')
+                .call(yAxis);
 
-    BarTreemap.prototype.update = function (key, value) {
-        switch (key) {
-        case 'year':
-            this.updateYear();
-            break;
-        case 'state':
-            this.updateState();
-            break;
+            this.line = canvas.append("path")
+                .attr("class", "line");
+
+            canvas.selectAll('.year')
+                .data(globals.available.years)
+                .enter().append('rect')
+                .attr('id', function (d) { return 'yearrect-' + d; })
+                .attr('class', 'year')
+                .attr('x', function (d) { return x(d); })
+                .attr('width', x.rangeBand())
+                .attr('y', 0)
+                .attr('height', height)
+                .on('click', function (d) {
+                    owner.updateSelected('year', d);
+                });
+        },
+
+        drawData: function () {
+            var line = this.line,
+                linePath = this.linePath,
+                owner = this.owner,
+                state = owner.globals.selected.state,
+                data = state === 'All States' ?
+                        owner.data.VALUES :
+                        _.find(owner.data.STATES, { 'STATE': state }).VALUES;
+
+            line.datum(data)
+                .transition()
+                .attr("d", linePath);
+        },
+
+        updateYear: function () {
+            var year = this.owner.globals.selected.year;
+
+            this.svg.selectAll('.year').classed('selected', false);
+            this.svg.select('#yearrect-' + year).classed('selected', true);
+        },
+
+        updateState: function () {
+            var state = this.owner.globals.selected.state,
+                str = state === 'All States' ? '' : state;
+
+            this.drawData();
+            this.title.children('span.replace.state').text(str);
         }
-    };
+    });
+
+    Map = Exhibit.create({
+        classed: 'map',
+        title: $('<h2>debt as a share of annual revenue, <span class="replace year"></span><h2>')
+    });
+
+    BarTreemap = Exhibit.create({
+        classed: 'bar-treemap',
+        title: $('<h2><span class="replace state"></span> debt and revenue totals, <span class="replace year"></span><h2>')
+    });
 
 }());
