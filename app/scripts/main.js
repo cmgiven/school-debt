@@ -46,6 +46,11 @@
             app.components.controls = new Controls('#controls', app);
             app.components.compare  = new LineChart('#compare', app);
             app.components.bars     = new BarTreemap('#bars', app);
+
+            $(window).resize(function () {
+                app.components.compare.redraw();
+                app.components.bars.redraw();
+            });
         },
 
         updateSelected: function (key, value) {
@@ -151,8 +156,10 @@
         this.owner = owner;
         this.$el = $(el);
         this.svg = d3.select(el).append('svg').classed('line-chart', true);
+        this.title = $('<h2><span class="replace state"></span> debt as a share of annual revenue<h2>');
+        this.$el.append(this.title);
 
-        this.drawAll();
+        this.redraw();
     };
 
     LineChart.prototype.drawBackground = function () {
@@ -160,7 +167,7 @@
             owner = this.owner,
             globals = owner.globals,
             svg = this.svg,
-            margin = {top: 22, right: 30, bottom: 22, left: 50},
+            margin = {top: 22, right: 30, bottom: 76, left: 50},
             width = this.$el.width() - margin.left - margin.right,
             height = this.$el.height() - margin.top - margin.bottom;
 
@@ -239,7 +246,7 @@
         var line = this.line,
             linePath = this.linePath,
             owner = this.owner,
-            state = this.owner.globals.selected.state,
+            state = owner.globals.selected.state,
             data = state === 'All States' ?
                     owner.data.VALUES :
                     _.find(owner.data.STATES, { 'STATE': state }).VALUES;
@@ -249,17 +256,26 @@
             .attr("d", linePath);
     };
 
-    LineChart.prototype.drawAll = function () {
-        this.drawBackground();
-        this.drawData();
-        this.updateYear();
-    };
-
     LineChart.prototype.updateYear = function () {
         var year = this.owner.globals.selected.year;
 
         this.svg.selectAll('.year').classed('selected', false);
         this.svg.select('#yearrect-' + year).classed('selected', true);
+    };
+
+    LineChart.prototype.updateState = function () {
+        var state = this.owner.globals.selected.state,
+            str = state === 'All States' ? '' : state;
+
+        this.drawData();
+        this.title.children('span.replace.state').text(str);
+    };
+
+    LineChart.prototype.redraw = function () {
+        this.drawBackground();
+        this.drawData();
+        this.updateYear();
+        this.updateState();
     };
 
     LineChart.prototype.update = function (key) {
@@ -268,7 +284,7 @@
             this.updateYear();
             break;
         case 'state':
-            this.drawData();
+            this.updateState();
             break;
         }
     };
@@ -276,13 +292,26 @@
     Map = function (el, owner) {
         this.owner = owner;
         this.$el = $(el);
-        this.properties = {
-            width: this.$el.width(),
-            height: this.$el.height()
-        };
-        this.svg = d3.select(el).append('svg')
-            .attr('width', this.properties.width)
-            .attr('height', this.properties.height);
+        this.svg = d3.select(el).append('svg').classed('map', true);
+        this.title = $('<h2>debt as a share of annual revenue, <span class="replace year"></span><h2>');
+        this.$el.append(this.title);
+
+        this.redraw();
+    };
+
+    Map.prototype.updateYear = function () {
+        var year = this.owner.globals.selected.year;
+
+        this.title.children('span.replace.year').text(year);
+    };
+
+    Map.prototype.updateState = function () {
+        var state = this.owner.globals.selected.state;
+    };
+
+    Map.prototype.redraw = function () {
+        this.updateYear();
+        this.updateState();
     };
 
     Map.prototype.update = function (key, value) {
@@ -292,17 +321,40 @@
     BarTreemap = function (el, owner) {
         this.owner = owner;
         this.$el = $(el);
-        this.properties = {
-            width: this.$el.width(),
-            height: this.$el.height()
-        };
-        this.svg = d3.select(el).append('svg')
-            .attr('width', this.properties.width)
-            .attr('height', this.properties.height);
+        this.svg = d3.select(el).append('svg').classed('bar-treemap', true);
+        this.title = $('<h2><span class="replace state"></span> debt and revenue totals, <span class="replace year"></span><h2>');
+        this.$el.append(this.title);
+
+        this.redraw();
+    };
+
+    BarTreemap.prototype.updateYear = function () {
+        var year = this.owner.globals.selected.year;
+
+        this.title.children('span.replace.year').text(year);
+    };
+
+    BarTreemap.prototype.updateState = function () {
+        var state = this.owner.globals.selected.state,
+            str = state === 'All States' ? '' : state;
+
+        this.title.children('span.replace.state').text(str);
+    };
+
+    BarTreemap.prototype.redraw = function () {
+        this.updateYear();
+        this.updateState();
     };
 
     BarTreemap.prototype.update = function (key, value) {
-        //
+        switch (key) {
+        case 'year':
+            this.updateYear();
+            break;
+        case 'state':
+            this.updateState();
+            break;
+        }
     };
 
 }());
