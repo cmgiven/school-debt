@@ -99,7 +99,7 @@ header {
     border-radius: 8px;
     cursor: pointer;
     background: #000;
-    transition: background-color .4s ease;
+    transition: background-color 250ms ease;
     &:hover {
       background: #1c020b;
     }
@@ -153,7 +153,7 @@ a.label {
     background-image: none;
     border: none;
     border-radius: 6px;
-    transition: color .4s ease;
+    transition: color 250ms ease;
 
     span.caret {
       width: 0;
@@ -165,7 +165,7 @@ a.label {
       border-left: 6px solid transparent;
       border-right: 6px solid transparent;
       border-top: 4px solid #ddd;
-      transition: border-top-color .4s ease;
+      transition: border-top-color 250ms ease;
     }
 
     &:hover {
@@ -237,6 +237,12 @@ a.label {
     stroke-width: 4px;
   }
 
+  .point {
+    fill: #8b0a35;
+    stroke: #202020;
+    stroke-width: 2px;
+  }
+
   .x.axis path, .y.axis path, .x.axis line {
     display: none;
   }
@@ -247,13 +253,18 @@ a.label {
   }
 
   .year.selected, .year:hover {
-    fill: #1f1f1f;
+    fill: #202020;
     fill: rgba(255,255,255,.05);
   }
 
   text {
     fill: #999;
     font-size: 14px;
+  }
+
+  text.label {
+    fill: #ccc;
+    font-weight: 800;
   }
 }
 

@@ -246,6 +246,9 @@
                 .range([height, 0])
                 .domain([0, 1]);
 
+            this.x = x;
+            this.y = y;
+
             function yearTicks(years) {
                 var i,
                     interval = width > 400 ? 2 : 4,
@@ -299,6 +302,15 @@
                 .on('click', function (d) {
                     owner.updateSelected('year', d);
                 });
+
+            this.point = canvas.append("circle")
+                .attr("class", "point")
+                .attr('r', '9px');
+
+            this.label = canvas.append("text")
+                .attr("class", "label")
+                .attr("text-anchor", "middle")
+                .attr("dy", "-1em");
         },
 
         drawData: function () {
@@ -315,11 +327,41 @@
                 .attr("d", linePath);
         },
 
+        drawLabel: function (transition) {
+            var x = this.x, y = this.y,
+                point = this.point,
+                label = this.label,
+                duration = transition ? 250 : 0,
+                owner = this.owner,
+                selected = owner.globals.selected,
+                year = selected.year,
+                state = selected.state,
+                data = state === 'All States' ?
+                        owner.data.VALUES :
+                        _.find(owner.data.STATES, { 'STATE': state }).VALUES,
+                yearData = _.find(data, { 'YEAR': year });
+
+            point.datum(yearData)
+                .transition()
+                .duration(duration)
+                .attr('cx', x(year) + (x.rangeBand() / 2))
+                .attr('cy', function (d) { return y(d.TOTALDEBT / d.TOTALREV); });
+
+            label.datum(yearData)
+                .text(function (d) { return Math.round(d.TOTALDEBT / d.TOTALREV * 100) + '%'; })
+                .transition()
+                .duration(duration)
+                .attr('x', x(year) + (x.rangeBand() / 2))
+                .attr('y', function (d) { return y(d.TOTALDEBT / d.TOTALREV); });
+        },
+
         updateYear: function () {
             var year = this.owner.globals.selected.year;
 
             this.svg.selectAll('.year').classed('selected', false);
             this.svg.select('#yearrect-' + year).classed('selected', true);
+
+            this.drawLabel();
         },
 
         updateState: function () {
@@ -328,6 +370,8 @@
 
             this.drawData();
             this.title.children('span.replace.state').text(str);
+
+            this.drawLabel(true);
         }
     });
 
