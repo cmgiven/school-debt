@@ -442,7 +442,8 @@
         },
 
         drawData: function (update) {
-            var height = this.height,
+            var max,
+                height = this.height,
                 canvas = this.canvas,
                 x = this.x,
                 y = this.y,
@@ -451,7 +452,7 @@
                 state = selected.state,
                 year = selected.year,
                 national = state === 'All States',
-                newLevel = national ? 0 : 1,
+                newDepth = national ? 0 : 1,
                 aggregate = national ?
                         owner.data :
                         _.find(owner.data.STATES, { 'STATE': state }),
@@ -460,65 +461,85 @@
                         aggregate.LEAS;
 
             if (update !== 'year') {
-                var max = _.reduce(aggregate.VALUES, function (max, year) {
+                max = _.reduce(aggregate.VALUES, function (max, year) {
                     return Math.max(max, year.TOTALREV, year.TOTALDEBT);
                 }, 0);
 
                 y.domain([0, max]);
+
+                this.data = _.map(this.series, function (value, key) {
+                    var treemap = d3.layout.treemap()
+                            .ratio(2)
+                            .sticky(true),
+                        clones = _.map(children, function (child) {
+                            return _.clone(child);
+                        });
+
+                    return {
+                        key: key,
+                        label: value,
+                        width: x.rangeBand(),
+                        offsetLeft: x(key),
+                        children: clones,
+                        treemap: treemap,
+                        updateYear: function (year) {
+                            this.value = _.find(aggregate.VALUES, { 'YEAR': year })[key];
+                            this.offsetTop = y(this.value);
+                            this.height = height - this.offsetTop - 2;
+                            this.treemap.size([this.width, this.height])
+                                .value(function (c) {
+                                    return _.find(c.VALUES, { 'YEAR': year })[key];
+                                });
+                            return this;
+                        }
+                    };
+                });
             }
 
             if (update !== 'state') {
-                var data = _.map(this.series, function (value, key) {
-                        var v = _.find(aggregate.VALUES, { 'YEAR': year })[key],
-                            offsetLeft = x(key),
-                            offsetTop = y(v),
-                            w = x.rangeBand(),
-                            h = height - offsetTop;
-                        return {
-                            key: key,
-                            value: v,
-                            label: value,
-                            width: w,
-                            height: h,
-                            offsetLeft: offsetLeft,
-                            offsetTop: offsetTop,
-                            children: children
-                        };
-                    }),
-                    g = canvas.selectAll("g.series")
-                        .data(data)
-                        .enter().append("g")
-                        .attr('class', function (d) { return 'series ' + d.key; })
-                        .attr("transform", function (d) {
-                            return "translate(" + d.offsetLeft + "," + d.offsetTop + ")";
-                        });
+                var g = canvas.selectAll("g.series")
+                        .data(this.data);
+
+                g.enter().append("g")
+                    .attr('class', function (d) { return 'series ' + d.key; });
 
                 g.each(function (d) {
-                    var treemap = d3.layout.treemap()
-                        .size([d.width, d.height])
-                        .sticky(true)
-                        .value(function (c) {
-                            return _.find(c.VALUES, { 'YEAR': year })[d.key];
-                        });
+                    var node,
+                        selection = d3.select(this);
 
-                    d3.select(this).selectAll('.node')
-                        .data(treemap.nodes)
-                        .enter().append('rect')
-                        .attr('class', 'node')
-                        .attr('x', function (c) { return c.x; })
-                        .attr('y', function (c) { return c.y; })
-                        .attr('width', function (c) { return c.dx; })
-                        .attr('height', function (c) { return c.dy; });
+                    d.updateYear(year);
+
+                    selection.transition().attr("transform", function (d) {
+                        return "translate(" + d.offsetLeft + "," + d.offsetTop + ")";
+                    });
+
+                    node = selection.selectAll('.node')
+                        .data(d.treemap.nodes);
+
+                    node.enter().append('rect')
+                        .attr('class', function (c) {
+                            return 'node' + (c.depth === newDepth ? ' parent' : '');
+                        })
+                        .attr('title', function (c) { return national ? c.STATE : c.LEA; });
+
+                    node.exit().remove();
+
+                    // node
                 });
 
+                g.selectAll('.node').transition()
+                    .attr('x', function (c) { return c.x; })
+                    .attr('y', function (c) { return c.y; })
+                    .attr('width', function (c) { return c.dx; })
+                    .attr('height', function (c) { return c.dy; });
                 
-            } else if (this.level === newLevel) {
+            } else if (this.depth === newDepth) {
                 //jumping between states, hide and show
             } else {
                 //moving between levels, animate
             }
 
-            this.level = newLevel;
+            this.depth = newDepth;
         },
 
         updateYear: function (initialDraw) {

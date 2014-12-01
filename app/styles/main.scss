@@ -274,9 +274,20 @@ a.label {
       display: none;
     }
     .node {
-      fill: #fff;
-      stroke: red;
-      stroke-width: 1px;
+      stroke-width: 2px;
+      &.parent { display: none; }
+    }
+    .TOTALREV {
+      .node {
+        fill: #999;
+        stroke: #161616;
+      }
+    }
+    .TOTALDEBT {
+      .node {
+        fill: #8b0a35;
+        stroke: #161616;
+      }
     }
   }
 }
