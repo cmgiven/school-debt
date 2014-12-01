@@ -32,7 +32,8 @@
         globals: {
             available: { years: [], states: [] },
             selected: { year: null, state: null },
-            view: null
+            view: null,
+            animating: false
         },
 
         initialize: function (data) {
@@ -472,7 +473,7 @@
         },
 
         drawData: function (update) {
-            var max,
+            var g1, max,
                 height = this.height,
                 canvas = this.canvas,
                 x = this.x,
@@ -499,8 +500,8 @@
 
                 this.data = _.map(this.series, function (value, key) {
                     var treemap = d3.layout.treemap()
-                            .ratio(2)
-                            .sticky(true),
+                            .sticky(national)
+                            .ratio(2),
                         clones = _.map(children, function (child) {
                             return _.clone(child);
                         });
@@ -515,10 +516,12 @@
                         updateYear: function (year) {
                             this.value = _.find(aggregate.VALUES, { 'YEAR': year })[key];
                             this.offsetTop = y(this.value);
-                            this.height = height - this.offsetTop - 2;
+                            this.height = height - this.offsetTop - 1;
                             this.treemap.size([this.width, this.height])
                                 .value(function (c) {
-                                    return _.find(c.VALUES, { 'YEAR': year })[key];
+                                    var m = _.find(c.VALUES, { 'YEAR': year }),
+                                        v = m ? m[key] : 0;
+                                    return v;
                                 });
                             return this;
                         }
@@ -526,47 +529,65 @@
                 });
             }
 
-            if (update !== 'state') {
-                var g = canvas.selectAll("g.series")
-                        .data(this.data);
+            g1 = canvas.selectAll("g.series")
+                .data(this.data);
 
-                g.enter().append("g")
-                    .attr('class', function (d) { return 'series ' + d.key; });
+            g1.enter().append("g")
+                .attr('class', function (d) { return 'series ' + d.key; });
 
+            function updateNodes(g, transition) {
                 g.each(function (d) {
                     var node,
                         selection = d3.select(this);
 
                     d.updateYear(year);
 
-                    selection.transition().attr("transform", function (d) {
-                        return "translate(" + d.offsetLeft + "," + d.offsetTop + ")";
-                    });
+                    selection.transition()
+                        .duration(transition ? 250 : 0)
+                        .attr("transform", function (d) {
+                            return "translate(" + d.offsetLeft + "," + d.offsetTop + ")";
+                        });
 
                     node = selection.selectAll('.node')
                         .data(d.treemap.nodes);
 
                     node.enter().append('rect')
                         .attr('class', function (c) {
-                            return 'node' + (c.depth === newDepth ? ' parent' : '');
+                            return 'node' + (c.depth === 0 ? ' parent' : '');
                         })
                         .attr('title', function (c) { return national ? c.STATE : c.LEA; });
 
                     node.exit().remove();
-
-                    // node
                 });
+            }
 
-                g.selectAll('.node').transition()
+            if (update !== 'state') {
+                g1.call(updateNodes, update && national);
+
+                g1.selectAll('.node').transition().duration(national ? 250 : 0)
                     .attr('x', function (c) { return c.x; })
                     .attr('y', function (c) { return c.y; })
                     .attr('width', function (c) { return c.dx; })
                     .attr('height', function (c) { return c.dy; });
-                
-            } else if (this.depth === newDepth) {
-                //jumping between states, hide and show
+
             } else {
-                //moving between levels, animate
+                g1.call(updateNodes);
+
+                if (this.depth === newDepth) {
+                    //jumping between states, hide and show
+                    g1.selectAll('.node')
+                        .attr('x', function (c) { return c.x; })
+                        .attr('y', function (c) { return c.y; })
+                        .attr('width', function (c) { return c.dx; })
+                        .attr('height', function (c) { return c.dy; });
+                } else {
+                    //moving between levels, animate
+                    g1.selectAll('.node')
+                        .attr('x', function (c) { return c.x; })
+                        .attr('y', function (c) { return c.y; })
+                        .attr('width', function (c) { return c.dx; })
+                        .attr('height', function (c) { return c.dy; });
+                }
             }
 
             this.depth = newDepth;

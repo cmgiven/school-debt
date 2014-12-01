@@ -274,19 +274,19 @@ a.label {
       display: none;
     }
     .node {
-      stroke-width: 2px;
       &.parent { display: none; }
+      stroke-width: .5px;
+      stroke: #161616;
+      stroke: rgba(22,22,22,0.5);
     }
     .TOTALREV {
       .node {
         fill: #999;
-        stroke: #161616;
       }
     }
     .TOTALDEBT {
       .node {
         fill: #8b0a35;
-        stroke: #161616;
       }
     }
   }
