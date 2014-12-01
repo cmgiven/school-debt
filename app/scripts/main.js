@@ -198,8 +198,8 @@
         draw: function () {
             this.drawBackground();
             this.drawData();
-            this.updateYear();
-            this.updateState();
+            this.updateYear(true);
+            this.updateState(true);
             this.updateTitle();
         },
 
@@ -364,14 +364,11 @@
             this.drawLabel();
         },
 
-        updateState: function () {
-            var state = this.owner.globals.selected.state,
-                str = state === 'All States' ? '' : state;
-
-            this.drawData();
-            this.title.children('span.replace.state').text(str);
-
-            this.drawLabel(true);
+        updateState: function (initialDraw) {
+            if (!initialDraw) {
+                this.drawData();
+                this.drawLabel(true);
+            }
         }
     });
 
@@ -382,7 +379,159 @@
 
     BarTreemap = Exhibit.create({
         classed: 'bar-treemap',
-        title: $('<h2><span class="replace state"></span> revenue and debt totals, <span class="replace year"></span><h2>')
+        title: $('<h2><span class="replace state"></span> revenue and debt totals, <span class="replace year"></span><h2>'),
+
+        series: {
+            "TOTALREV": "Annual Revenue",
+            "TOTALDEBT": "Outstanding Debt"
+        },
+
+        drawBackground: function () {
+            var x, y, xAxis, yAxis, canvas,
+                svg = this.svg,
+                series = this.series,
+                margin = {top: 50, right: 30, bottom: 76, left: 30},
+                width = this.$el.width() - margin.left - margin.right,
+                height = this.$el.height() - margin.top - margin.bottom;
+
+            this.margin = margin;
+            this.width = width;
+            this.height = height;
+
+            svg.attr('width', width + margin.left + margin.right)
+                .attr('height', height + margin.top + margin.bottom);
+
+            svg.select('g.canvas').remove();
+            canvas = svg.append('g')
+                .classed('canvas', true)
+                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+            x = d3.scale.ordinal()
+                .rangeBands([0, width], 0.5, 0.25)
+                .domain(_.keys(series));
+
+            y = d3.scale.linear()
+                .range([height, 0]);
+
+            this.x = x;
+            this.y = y;
+
+            xAxis = d3.svg.axis()
+                .scale(x)
+                .orient('bottom')
+                .tickFormat(function (d) {
+                    return series[d];
+                });
+
+            yAxis = d3.svg.axis()
+                .scale(y)
+                .orient('left')
+                .ticks(1)
+                .tickSize(-width, 0, 0);
+
+            canvas.append('g')
+                .attr('class', 'x axis')
+                .attr('transform', 'translate(0,' + height + ')')
+                .call(xAxis);
+
+            canvas.append('g')
+                .attr('class', 'y axis')
+                .call(yAxis);
+
+            this.canvas = canvas;
+        },
+
+        drawData: function (update) {
+            var height = this.height,
+                canvas = this.canvas,
+                x = this.x,
+                y = this.y,
+                owner = this.owner,
+                selected = owner.globals.selected,
+                state = selected.state,
+                year = selected.year,
+                national = state === 'All States',
+                newLevel = national ? 0 : 1,
+                aggregate = national ?
+                        owner.data :
+                        _.find(owner.data.STATES, { 'STATE': state }),
+                children = national ?
+                        aggregate.STATES :
+                        aggregate.LEAS;
+
+            if (update !== 'year') {
+                var max = _.reduce(aggregate.VALUES, function (max, year) {
+                    return Math.max(max, year.TOTALREV, year.TOTALDEBT);
+                }, 0);
+
+                y.domain([0, max]);
+            }
+
+            if (update !== 'state') {
+                var data = _.map(this.series, function (value, key) {
+                        var v = _.find(aggregate.VALUES, { 'YEAR': year })[key],
+                            offsetLeft = x(key),
+                            offsetTop = y(v),
+                            w = x.rangeBand(),
+                            h = height - offsetTop;
+                        return {
+                            key: key,
+                            value: v,
+                            label: value,
+                            width: w,
+                            height: h,
+                            offsetLeft: offsetLeft,
+                            offsetTop: offsetTop,
+                            children: children
+                        };
+                    }),
+                    g = canvas.selectAll("g.series")
+                        .data(data)
+                        .enter().append("g")
+                        .attr('class', function (d) { return 'series ' + d.key; })
+                        .attr("transform", function (d) {
+                            return "translate(" + d.offsetLeft + "," + d.offsetTop + ")";
+                        });
+
+                g.each(function (d) {
+                    var treemap = d3.layout.treemap()
+                        .size([d.width, d.height])
+                        .sticky(true)
+                        .value(function (c) {
+                            return _.find(c.VALUES, { 'YEAR': year })[d.key];
+                        });
+
+                    d3.select(this).selectAll('.node')
+                        .data(treemap.nodes)
+                        .enter().append('rect')
+                        .attr('class', 'node')
+                        .attr('x', function (c) { return c.x; })
+                        .attr('y', function (c) { return c.y; })
+                        .attr('width', function (c) { return c.dx; })
+                        .attr('height', function (c) { return c.dy; });
+                });
+
+                
+            } else if (this.level === newLevel) {
+                //jumping between states, hide and show
+            } else {
+                //moving between levels, animate
+            }
+
+            this.level = newLevel;
+        },
+
+        updateYear: function (initialDraw) {
+            if (!initialDraw) {
+                this.drawData('year');
+            }
+        },
+
+        updateState: function (initialDraw) {
+            if (!initialDraw) {
+                this.drawData('state');
+            }
+        }
     });
 
 }());

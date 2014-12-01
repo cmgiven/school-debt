@@ -43,6 +43,7 @@ h1 {
 
 .exhibit {
   position: relative;
+  margin-bottom: 20px;
 
   @media screen and (min-width: 980px) {
     width: 50%;
@@ -222,24 +223,11 @@ a.label {
   display: block;
 }
 
-.line-chart {
+.exhibit {
   .axis path,
   .axis line {
     fill: none;
     stroke: #333;
-    stroke-width: 2px;
-    shape-rendering: crispEdges;
-  }
-
-  .line {
-    fill: none;
-    stroke: #8b0a35;
-    stroke-width: 4px;
-  }
-
-  .point {
-    fill: #8b0a35;
-    stroke: #202020;
     stroke-width: 2px;
   }
 
@@ -247,24 +235,49 @@ a.label {
     display: none;
   }
 
-  .year {
-    fill: transparent;
-    cursor: pointer;
-  }
-
-  .year.selected, .year:hover {
-    fill: #202020;
-    fill: rgba(255,255,255,.05);
-  }
-
   text {
     fill: #999;
     font-size: 14px;
   }
 
-  text.label {
-    fill: #ccc;
-    font-weight: 800;
+  .line-chart {
+    .line {
+      fill: none;
+      stroke: #8b0a35;
+      stroke-width: 4px;
+    }
+
+    .point {
+      fill: #8b0a35;
+      stroke: #202020;
+      stroke-width: 2px;
+    }
+
+    .year {
+      fill: transparent;
+      cursor: pointer;
+    }
+
+    .year.selected, .year:hover {
+      fill: #202020;
+      fill: rgba(255,255,255,.05);
+    }
+
+    text.label {
+      fill: #ccc;
+      font-weight: 800;
+    }
+  }
+
+  .bar-treemap {
+    .y.axis text, .y.axis .tick:nth-child(2) {
+      display: none;
+    }
+    .node {
+      fill: #fff;
+      stroke: red;
+      stroke-width: 1px;
+    }
   }
 }
 
