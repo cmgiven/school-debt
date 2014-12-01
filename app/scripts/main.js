@@ -55,6 +55,36 @@
                 app.components.compare.draw();
                 app.components.bars.draw();
             });
+
+            $(document).keydown(function (e) {
+                if (app.globals.view === 'LineChart') {
+                    var available = app.globals.available.years,
+                        selected = app.globals.selected.year,
+                        index = _.findIndex(available, function (year) {
+                            return year === selected;
+                        });
+                    switch (e.which) {
+                    case 37: // left
+                        app.updateSelected(
+                            'year',
+                            available[index === 0 ? available.length - 1 : index - 1]
+                        );
+                        break;
+
+                    case 39: // right
+                        app.updateSelected(
+                            'year',
+                            available[index === available.length - 1 ? 0 : index + 1]
+                        );
+                        break;
+
+                    default:
+                        return;
+                    }
+
+                    e.preventDefault();
+                }
+            });
         },
 
         updateSelected: function (key, value) {
