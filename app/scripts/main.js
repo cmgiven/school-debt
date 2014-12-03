@@ -473,7 +473,7 @@
         },
 
         drawData: function (update) {
-            var g1, max,
+            var g1, max, tDuration,
                 height = this.height,
                 canvas = this.canvas,
                 x = this.x,
@@ -483,7 +483,6 @@
                 state = selected.state,
                 year = selected.year,
                 national = state === 'All States',
-                newDepth = national ? 0 : 1,
                 aggregate = national ?
                         owner.data :
                         _.find(owner.data.STATES, { 'STATE': state }),
@@ -535,18 +534,12 @@
             g1.enter().append("g")
                 .attr('class', function (d) { return 'series ' + d.key; });
 
-            function updateNodes(g, transition) {
-                g.each(function (d) {
+            function updateNodes() {
+                this.each(function (d) {
                     var node,
                         selection = d3.select(this);
 
                     d.updateYear(year);
-
-                    selection.transition()
-                        .duration(transition ? 250 : 0)
-                        .attr("transform", function (d) {
-                            return "translate(" + d.offsetLeft + "," + d.offsetTop + ")";
-                        });
 
                     node = selection.selectAll('.node')
                         .data(d.treemap.nodes);
@@ -559,38 +552,50 @@
 
                     node.exit().remove();
                 });
+
+                return this;
             }
 
-            if (update !== 'state') {
-                g1.call(updateNodes, update && national);
+            function resizeBars() {
+                this.attr("transform", function (d) {
+                    return "translate(" + d.offsetLeft + "," + d.offsetTop + ")";
+                });
+                return this;
+            }
 
-                g1.selectAll('.node').transition().duration(national ? 250 : 0)
+            function resizeNodes() {
+                this.selectAll('.node')
                     .attr('x', function (c) { return c.x; })
                     .attr('y', function (c) { return c.y; })
                     .attr('width', function (c) { return c.dx; })
                     .attr('height', function (c) { return c.dy; });
+                return this;
+            }
+
+            if (update !== 'state') {
+                tDuration = update && national ? 250 : 0;
+
+                g1.call(updateNodes)
+                    .transition().duration(tDuration)
+                    .call(resizeBars)
+                    .call(resizeNodes);
 
             } else {
-                g1.call(updateNodes);
+                g1.call(updateNodes)
+                    .call(resizeBars)
+                    .call(resizeNodes);
 
-                if (this.depth === newDepth) {
-                    //jumping between states, hide and show
-                    g1.selectAll('.node')
-                        .attr('x', function (c) { return c.x; })
-                        .attr('y', function (c) { return c.y; })
-                        .attr('width', function (c) { return c.dx; })
-                        .attr('height', function (c) { return c.dy; });
-                } else {
+                if (national || this.last.state === 'All States') {
                     //moving between levels, animate
-                    g1.selectAll('.node')
-                        .attr('x', function (c) { return c.x; })
-                        .attr('y', function (c) { return c.y; })
-                        .attr('width', function (c) { return c.dx; })
-                        .attr('height', function (c) { return c.dy; });
+                } else {
+                    //jumping between states, hide and show
                 }
             }
 
-            this.depth = newDepth;
+            this.last = {
+                state: state,
+                year: year
+            };
         },
 
         updateYear: function (initialDraw) {
