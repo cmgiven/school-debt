@@ -156,12 +156,13 @@
             });
         }
 
-        function onClick(e) {
+        function onListClick(e) {
             var type = $(this).data('type'),
                 value = $(e.target).text();
 
             e.preventDefault();
 
+            owner.globals.animating = false;
             owner.updateSelected(type, value);
         }
 
@@ -169,13 +170,13 @@
         populateMenu(yearList, years);
         yearList.find('li:first-child a').addClass('selected');
         this.$el.find('#year-button span.text').text(latestYear);
-        yearList.click(onClick);
+        yearList.click(onListClick);
 
         stateList.children().remove();
         populateMenu(stateList, states);
         stateList.prepend($('<li><a role="menuitem" href="#" class="selected">All States</a></li>'));
         this.$el.find('#state-button span.text').text('All States');
-        stateList.click(onClick);
+        stateList.click(onListClick);
     };
 
     Controls.prototype.update = function (key, value) {
@@ -473,7 +474,7 @@
         },
 
         drawData: function (update) {
-            var g1, max, tDuration,
+            var g1, max,
                 height = this.height,
                 canvas = this.canvas,
                 x = this.x,
@@ -488,7 +489,9 @@
                         _.find(owner.data.STATES, { 'STATE': state }),
                 children = national ?
                         aggregate.STATES :
-                        aggregate.LEAS;
+                        aggregate.LEAS,
+                animating = app.globals.animating,
+                tDuration = update && national ? animating ? 500 : 250 : 0;
 
             if (update !== 'year') {
                 max = _.reduce(aggregate.VALUES, function (max, year) {
@@ -573,10 +576,9 @@
             }
 
             if (update !== 'state') {
-                tDuration = update && national ? 250 : 0;
-
                 g1.call(updateNodes)
                     .transition().duration(tDuration)
+                    .ease(animating ? 'linear' : 'cubic-in-out')
                     .call(resizeBars)
                     .call(resizeNodes);
 
