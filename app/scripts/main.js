@@ -59,24 +59,13 @@
 
             $(document).keydown(function (e) {
                 if (app.globals.view === 'LineChart') {
-                    var available = app.globals.available.years,
-                        selected = app.globals.selected.year,
-                        index = _.findIndex(available, function (year) {
-                            return year === selected;
-                        });
                     switch (e.which) {
                     case 37: // left
-                        app.updateSelected(
-                            'year',
-                            available[index === 0 ? available.length - 1 : index - 1]
-                        );
+                        app.shiftYear(true);
                         break;
 
                     case 39: // right
-                        app.updateSelected(
-                            'year',
-                            available[index === available.length - 1 ? 0 : index + 1]
-                        );
+                        app.shiftYear();
                         break;
 
                     default:
@@ -94,6 +83,19 @@
             _.each(app.components, function (component) {
                 component.update(key, value);
             });
+        },
+
+        shiftYear: function (decrement) {
+            var available = app.globals.available.years,
+                selected = app.globals.selected.year,
+                index = _.findIndex(available, function (year) {
+                    return year === selected;
+                }),
+                newYear = decrement ?
+                        available[index === 0 ? available.length - 1 : index - 1] :
+                        available[index === available.length - 1 ? 0 : index + 1];
+
+            app.updateSelected('year', newYear);
         },
 
         toggleView: function (newView) {
@@ -119,7 +121,7 @@
 
         this.populateMenus();
 
-        function onClick(e) {
+        function onSelectorClick(e) {
             e.preventDefault();
 
             if ($(e.target).parents('.dropdown').length === 0) {
@@ -133,7 +135,7 @@
             }
         }
 
-        this.$el.children().click(onClick);
+        this.$el.children('.selector').click(onSelectorClick);
     };
 
     Controls.prototype.populateMenus = function () {
