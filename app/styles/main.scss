@@ -110,6 +110,65 @@ header {
   }
 }
 
+.play-button {
+  position: relative;
+  top: -2px;
+  width: 44px;
+  height: 44px;
+  margin: 0 4px;
+  border: 4px solid #999;
+  border-radius: 44px;
+  background: none;
+  overflow: hidden;
+  text-indent: 44px;
+  transition: border-color 250ms ease;
+
+  &:hover {
+    border-color: #ccc;
+  }
+
+  &.disabled {
+    border-color: #333;
+  }
+
+  &.paused:before {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 0; height: 0;
+    top: 10px;
+    left: 14px;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-left: 12px solid #999;
+    transition: border-color 250ms ease;
+  }
+
+  &.paused:hover:before {
+    border-left-color: #ccc;
+  }
+
+  &.paused.disabled:before {
+    border-left-color: #333;
+  }
+
+  &.playing:after {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 12px; height: 14px;
+    top: 11px;
+    left: 12px;
+    border-right: 4px solid #999;
+    border-left: 4px solid #999;
+    transition: border-color 250ms ease;
+  }
+
+  &.playing:hover:after {
+    border-color: #ccc;
+  }
+}
+
 #year-selector {
   button {
     width: 105px;
