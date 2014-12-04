@@ -317,11 +317,6 @@ a.label {
       cursor: pointer;
     }
 
-    .year.selected, .year:hover {
-      fill: #202020;
-      fill: rgba(255,255,255,.05);
-    }
-
     text.label {
       fill: #ccc;
       font-weight: 800;
@@ -349,6 +344,13 @@ a.label {
       }
     }
   }
+}
+
+
+
+body:not(.animating) .line-chart .year.selected, .line-chart .year:hover {
+  fill: #202020;
+  fill: rgba(255,255,255,.05);
 }
 
 /* Modified version of SpinKit */

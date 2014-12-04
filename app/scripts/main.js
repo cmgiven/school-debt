@@ -126,12 +126,14 @@
 
                 toggle.removeClass('playing');
                 toggle.addClass('paused');
+                $('body').removeClass('animating');
             } else {
                 app.globals.animating = true;
                 window.requestAnimationFrame(frame);
 
                 toggle.removeClass('paused');
                 toggle.addClass('playing');
+                $('body').addClass('animating');
             }
         },
 
@@ -318,6 +320,9 @@
             svg.attr('width', width + margin.left + margin.right)
                 .attr('height', height + margin.top + margin.bottom);
 
+            this.width = width;
+            this.height = height;
+
             svg.select('g.canvas').remove();
             canvas = svg.append('g')
                 .classed('canvas', true)
@@ -416,28 +421,72 @@
             var x = this.x, y = this.y,
                 point = this.point,
                 label = this.label,
-                duration = transition ? 250 : 0,
                 owner = this.owner,
                 selected = owner.globals.selected,
-                year = selected.year,
+                animating = owner.globals.animating,
                 state = selected.state,
+                year = selected.year,
+                availableYears = owner.globals.available.years,
+                yearIndex = _.findIndex(availableYears, function (test) {
+                    return test === year;
+                }),
+                loopYear = yearIndex === 0,
                 data = state === 'All States' ?
                         owner.data.VALUES :
                         _.find(owner.data.STATES, { 'STATE': state }).VALUES,
-                yearData = _.find(data, { 'YEAR': year });
+                yearData = _.find(data, { 'YEAR': year }),
+                duration = animating ? 500 : transition ? 250 : 0;
 
-            point.datum(yearData)
-                .transition()
-                .duration(duration)
-                .attr('cx', x(year) + (x.rangeBand() / 2))
-                .attr('cy', function (d) { return y(d.TOTALDEBT / d.TOTALREV); });
+            if (animating && loopYear) {
+                point.datum(yearData)
+                    .transition().duration(duration / 2)
+                    .ease('cubic-in')
+                    .attr('cx', this.width + 100)
+                    .each('end', function () {
+                        d3.select(this).attr('cx', -100)
+                            .attr('cy', function (d) { return y(d.TOTALDEBT / d.TOTALREV); });
+                    })
+                    .transition().duration(duration / 2)
+                    .ease('cubic-out')
+                    .attr('cx', x(year) + (x.rangeBand() / 2));
 
-            label.datum(yearData)
-                .text(function (d) { return Math.round(d.TOTALDEBT / d.TOTALREV * 100) + '%'; })
-                .transition()
-                .duration(duration)
-                .attr('x', x(year) + (x.rangeBand() / 2))
-                .attr('y', function (d) { return y(d.TOTALDEBT / d.TOTALREV); });
+                label.datum(yearData)
+                    .transition().duration(duration / 2)
+                    .ease('cubic-in')
+                    .attr('x', this.width + 100)
+                    .each('end', function () {
+                        d3.select(this).attr('x', -100)
+                            .attr('y', function (d) {
+                                var posY = y(d.TOTALDEBT / d.TOTALREV);
+                                posY = posY < 10 ? 10 : posY;
+                                return posY;
+                            })
+                            .text(function (d) { return Math.round(d.TOTALDEBT / d.TOTALREV * 100) + '%'; });
+                    })
+                    .transition().duration(duration / 2)
+                    .ease('cubic-out')
+                    .attr('x', x(year) + (x.rangeBand() / 2));
+            } else {
+                point.datum(yearData)
+                    .transition().duration(duration)
+                    .ease(animating ? 'linear' : 'cubic-in-out')
+                    .attr('cx', x(year) + (x.rangeBand() / 2))
+                    .attr('cy', function (d) { return y(d.TOTALDEBT / d.TOTALREV); });
+
+                label.datum(yearData)
+                    .transition().duration(duration)
+                    .ease(animating ? 'linear' : 'cubic-in-out')
+                    .attr('x', x(year) + (x.rangeBand() / 2))
+                    .attr('y', function (d) {
+                        var posY = y(d.TOTALDEBT / d.TOTALREV);
+                        posY = posY < 10 ? 10 : posY;
+                        return posY;
+                    })
+                    .each('end', function () {
+                        d3.select(this)
+                            .text(function (d) { return Math.round(d.TOTALDEBT / d.TOTALREV * 100) + '%'; });
+                    });
+            }
         },
 
         updateYear: function () {
@@ -606,6 +655,13 @@
                         })
                         .attr('title', function (c) { return national ? c.STATE : c.LEA; });
 
+                    if (national) {
+                        node.on('click', function (d) {
+                            console.log(d);
+                            owner.updateSelected('state', d.STATE);
+                        });
+                    }
+
                     node.exit().remove();
                 });
 
@@ -632,7 +688,7 @@
                 return g;
             }
 
-            if (update !== 'state') {
+            if (update !== 'state' || state === this.last.state) {
                 g1.call(updateNodes)
                     .transition().duration(tDuration)
                     .ease(animating ? 'linear' : 'cubic-in-out')
@@ -643,8 +699,7 @@
                 if (national) {
                     //zoom out from a state
                     g1.classed('series', false)
-                        .transition().duration(500)
-                        .call(resizeBars) //replace with state transform
+                        .transition().duration(500) //add state transform
                         .style('opacity', 0)
                         .remove();
 
