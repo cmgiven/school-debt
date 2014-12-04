@@ -640,9 +640,13 @@
                     .call(resizeNodes);
 
             } else {
-                if (national || this.last.state === 'All States') {
-                    //moving between levels, animate NOT COMPLETE
-                    g1.remove();
+                if (national) {
+                    //zoom out from a state
+                    g1.classed('series', false)
+                        .transition().duration(500)
+                        .call(resizeBars) //replace with state transform
+                        .style('opacity', 0)
+                        .remove();
 
                     g2 = canvas.selectAll("g.series")
                         .data(this.data);
@@ -652,7 +656,32 @@
 
                     g2.call(updateNodes)
                         .call(resizeBars)
-                        .call(resizeNodes);
+                        .call(resizeNodes)
+                        .style('opacity', 0)
+                        .transition().duration(500)
+                        .style('opacity', 1);
+
+                } else if (this.last.state === 'All States') {
+                    //zoom in to a state
+                    g1.classed('series', false)
+                        .transition().duration(500)
+                        .style('opacity', 0)
+                        .remove();
+
+                    g2 = canvas.selectAll("g.series")
+                        .data(this.data);
+
+                    g2.enter().append("g")
+                        .attr('class', function (d) { return 'series ' + d.key; });
+
+                    g2.call(updateNodes)
+                        .call(resizeBars) //replace with state transform
+                        .call(resizeNodes)
+                        .style('opacity', 0)
+                        .transition().duration(500)
+                        .call(resizeBars)
+                        .style('opacity', 1);
+
                 } else {
                     //jumping between states, hide and show
                     g1.classed('series', false)
