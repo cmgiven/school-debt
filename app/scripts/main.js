@@ -456,8 +456,8 @@
                 .attr('class', 'y axis')
                 .call(yAxis);
 
-            this.line = canvas.append("path")
-                .attr("class", "line");
+            this.line = canvas.append('path')
+                .attr('class', 'line');
 
             canvas.selectAll('.year')
                 .data(globals.available.years)
@@ -493,7 +493,7 @@
 
             line.datum(data)
                 .transition()
-                .attr("d", linePath);
+                .attr('d', linePath);
         },
 
         drawLabel: function (transition) {
@@ -602,8 +602,8 @@
         title: $('<h2><span class="replace state"></span> revenue and debt totals, <span class="replace year"></span><h2>'),
 
         series: {
-            "TOTALREV": "Annual Revenue",
-            "TOTALDEBT": "Outstanding Debt"
+            'TOTALREV': 'Annual Revenue',
+            'TOTALDEBT': 'Outstanding Debt'
         },
 
         drawBackground: function () {
@@ -720,10 +720,10 @@
             }
 
             function addBars(data) {
-                var g = canvas.selectAll("g.series")
+                var g = canvas.selectAll('g.series')
                     .data(data);
 
-                g.enter().append("g")
+                g.enter().append('g')
                     .attr('class', function (d) { return 'series ' + d.key; });
 
                 g.each(function (d) {
@@ -778,12 +778,12 @@
             }
 
             function resizeBars(g, zero) {
-                g.attr("transform", function (d) {
+                g.attr('transform', function (d) {
                     if (zero) {
-                        return "translate(" + d.offsetLeft + "," + height + ") scale(1 0)";
+                        return 'translate(' + d.offsetLeft + ',' + height + ') scale(1 0)';
                     }
 
-                    return "translate(" + d.offsetLeft + "," + d.offsetTop + ")";
+                    return 'translate(' + d.offsetLeft + ',' + d.offsetTop + ')';
                 });
                 return g;
             }
