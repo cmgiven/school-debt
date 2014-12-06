@@ -151,8 +151,8 @@
                 direction = offset.left > $(window).width() / 2;
 
                 position.left = direction ?
-                        offset.left - size.width - 4 :
-                        offset.left + parseInt($el.attr('width'), 10) + 4;
+                        offset.left - size.width - 3 :
+                        offset.left + parseInt($el.attr('width'), 10) + 3;
 
                 position.top = offset.top - size.height - 4;
 
