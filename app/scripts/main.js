@@ -14,6 +14,18 @@
 
         DATA_PATH = 'data/data.json';
 
+    function dollarsInMillions(amount) {
+        var i,
+            millions = Math.round(amount / 1000000),
+            string = String(millions);
+
+        for (i = string.length - 3; i > 0; i -= 3) {
+            string = string.slice(0, i) + ',' + string.slice(i, string.length);
+        }
+
+        return '$' + string + ' million';
+    }
+
     $(function () {
         $.ajax({
             url: DATA_PATH,
@@ -99,10 +111,68 @@
             app.updateSelected('year', newYear, animation);
         },
 
-        highlight: function (key, value) {
+        highlight: function (el, key, value) {
             _.each(app.components, function (component) {
                 if (component.highlight) { component.highlight(key, value); }
             });
+
+            if (key === 'state') {
+                app.displayTooltip(el, value);
+            }
+        },
+
+        displayTooltip: function (el, value) {
+            if (value && !app.globals.animating) {
+                var tooltip, entity, parentEntity, values,
+                    name, revenue, debt, offset, direction,
+                    position = {}, size = { width: 320, height: 121 },
+                    $el = $(el),
+                    selected = app.globals.selected,
+                    year = selected.year,
+                    state = selected.state,
+                    national = state === 'All States';
+
+                if (national) {
+                    entity = _.find(app.data.STATES, { 'STATE': value });
+                    values = _.find(entity.VALUES, { 'YEAR': year });
+                    name = value;
+                } else {
+                    parentEntity = _.find(app.data.STATES, { 'STATE': state });
+                    entity = _.find(parentEntity.LEAS, { 'ID': value });
+                    values = _.find(entity.VALUES, { 'YEAR': year });
+                    name = entity.NAME;
+                }
+
+                revenue = values.TOTALREV;
+                debt = values.TOTALDEBT;
+
+                offset = $el.offset();
+
+                direction = offset.left > $(window).width() / 2;
+
+                position.left = direction ?
+                        offset.left - size.width - 4 :
+                        offset.left + parseInt($el.attr('width'), 10) + 4;
+
+                position.top = offset.top - size.height - 4;
+
+                tooltip = $('#tooltip');
+
+                tooltip.css({
+                    'left': position.left,
+                    'top': position.top,
+                    'width': size.width,
+                    'height': size.height
+                }).toggleClass('left-side', direction);
+
+                tooltip.find('.name').text(name);
+                tooltip.find('.revenue').text(dollarsInMillions(revenue));
+                tooltip.find('.debt').text(dollarsInMillions(debt));
+
+                tooltip.show();
+            } else {
+                $('#tooltip').hide();
+            }
         },
 
         toggleAnimation: function (disable) {
@@ -601,18 +671,6 @@
                 animating = app.globals.animating,
                 tDuration = update && national ? animating ? 500 : 250 : 0;
 
-            function dollarsInMillions(amount) {
-                var i,
-                    millions = Math.round(amount / 1000000),
-                    string = String(millions);
-
-                for (i = string.length - 3; i > 0; i -= 3) {
-                    string = string.slice(0, i) + ',' + string.slice(i, string.length);
-                }
-
-                return '$' + string + ' million';
-            }
-
             if (update !== 'year') {
                 max = _.reduce(aggregate.VALUES, function (max, year) {
                     return Math.max(max, year.TOTALREV, year.TOTALDEBT);
@@ -692,14 +750,15 @@
 
                     if (national) {
                         node.on('click', function (d) {
+                            owner.highlight('state', undefined);
                             owner.updateSelected('state', d.STATE);
                         });
                     }
 
                     node.on('mouseover', function (d) {
-                        owner.highlight('state', national ? d.STATE : d.ID);
+                        owner.highlight(this, 'state', national ? d.STATE : d.ID);
                     }).on('mouseout', function () {
-                        owner.highlight('state', undefined);
+                        owner.highlight(this, 'state', undefined);
                     });
 
                     node.exit().remove();
