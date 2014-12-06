@@ -12,7 +12,8 @@
         Map,
         BarTreemap,
 
-        DATA_PATH = 'data/data.json';
+        DATA_PATH = 'data/data.json',
+        MAP_PATH = 'data/us-states.json';
 
     function dollarsInMillions(amount) {
         var i,
@@ -63,6 +64,8 @@
             app.components.controls = new Controls('#controls', app);
             app.components.compare  = new LineChart('#compare', app);
             app.components.bars     = new BarTreemap('#bars', app);
+
+            Map.cacheData();
 
             $(window).resize(function () {
                 app.components.compare.draw();
@@ -586,6 +589,13 @@
         classed: 'map',
         title: $('<h2>debt as a share of annual revenue, <span class="replace year"></span><h2>')
     });
+
+    Map.cacheData = function () {
+        $.ajax({
+            url: MAP_PATH,
+            dataType: 'json'
+        });
+    };
 
     BarTreemap = Exhibit.create({
         classed: 'bar-treemap',
