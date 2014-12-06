@@ -299,6 +299,10 @@ a.label {
     font-size: 14px;
   }
 
+  text.label {
+    fill: #ccc;
+  }
+
   .line-chart {
     .line {
       fill: none;
@@ -318,7 +322,6 @@ a.label {
     }
 
     text.label {
-      fill: #ccc;
       font-weight: 800;
     }
   }
@@ -328,6 +331,7 @@ a.label {
       display: none;
     }
     .node {
+      &.state { cursor: pointer; }
       &.parent { display: none; }
       stroke-width: .5px;
       stroke: #161616;

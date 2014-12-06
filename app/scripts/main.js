@@ -393,14 +393,14 @@
                     owner.updateSelected('year', d);
                 });
 
-            this.point = canvas.append("circle")
-                .attr("class", "point")
+            this.point = canvas.append('circle')
+                .attr('class', 'point')
                 .attr('r', '9px');
 
-            this.label = canvas.append("text")
-                .attr("class", "label")
-                .attr("text-anchor", "middle")
-                .attr("dy", "-1em");
+            this.label = canvas.append('text')
+                .attr('class', 'label')
+                .attr('text-anchor', 'middle')
+                .attr('dy', '-1em');
         },
 
         drawData: function () {
@@ -595,6 +595,18 @@
                 animating = app.globals.animating,
                 tDuration = update && national ? animating ? 500 : 250 : 0;
 
+            function dollarsInMillions(amount) {
+                var i,
+                    millions = Math.round(amount / 1000000),
+                    string = String(millions);
+
+                for (i = string.length - 3; i > 0; i -= 3) {
+                    string = string.slice(0, i) + ',' + string.slice(i, string.length);
+                }
+
+                return '$' + string + ' million';
+            }
+
             if (update !== 'year') {
                 max = _.reduce(aggregate.VALUES, function (max, year) {
                     return Math.max(max, year.TOTALREV, year.TOTALDEBT);
@@ -633,11 +645,26 @@
                 });
             }
 
-            g1 = canvas.selectAll("g.series")
-                .data(this.data);
+            function addBars(data) {
+                var g = canvas.selectAll("g.series")
+                    .data(data);
 
-            g1.enter().append("g")
-                .attr('class', function (d) { return 'series ' + d.key; });
+                g.enter().append("g")
+                    .attr('class', function (d) { return 'series ' + d.key; });
+
+                g.each(function (d) {
+                    d3.select(this).append('text')
+                        .datum(d)
+                        .attr('class', 'label')
+                        .attr('text-anchor', 'middle')
+                        .attr('dy', '-.5em')
+                        .attr('dx', d.width / 2);
+                });
+
+                return g;
+            }
+
+            g1 = addBars(this.data);
 
             function updateNodes(g) {
                 g.each(function (d) {
@@ -651,13 +678,14 @@
 
                     node.enter().append('rect')
                         .attr('class', function (c) {
-                            return 'node' + (c.depth === 0 ? ' parent' : '');
+                            return 'node'
+                                + (c.depth === 0 ? ' parent' : '')
+                                + (national ? ' state' : '');
                         })
                         .attr('title', function (c) { return national ? c.STATE : c.LEA; });
 
                     if (national) {
                         node.on('click', function (d) {
-                            console.log(d);
                             owner.updateSelected('state', d.STATE);
                         });
                     }
@@ -684,8 +712,35 @@
                     .attr('x', function (c) { return c.x; })
                     .attr('y', function (c) { return c.y; })
                     .attr('width', function (c) { return c.dx; })
-                    .attr('height', function (c) { return c.dy; });
+                    .attr('height', function (c) { return c.dy > 0 ? c.dy : 0; });
                 return g;
+            }
+
+            function updateLabels(g) {
+                if (g.tween) {
+                    g.selectAll('.label')
+                        .tween('text', function (d) {
+                            var i = function (t) {
+                                var amount;
+
+                                if (t !== 1 && d.oldValue) {
+                                    amount = d.oldValue + ((d.value - d.oldValue) * t);
+                                } else {
+                                    amount = d.value;
+                                    d.oldValue = d.value;
+                                }
+
+                                return dollarsInMillions(amount);
+                            };
+
+                            return function (t) { this.textContent = i(t); };
+                        });
+                } else {
+                    g.selectAll('.label')
+                        .text(function (d) {
+                            return dollarsInMillions(d.value);
+                        });
+                }
             }
 
             if (update !== 'state' || state === this.last.state) {
@@ -693,7 +748,8 @@
                     .transition().duration(tDuration)
                     .ease(animating ? 'linear' : 'cubic-in-out')
                     .call(resizeBars)
-                    .call(resizeNodes);
+                    .call(resizeNodes)
+                    .call(updateLabels);
 
             } else {
                 if (national) {
@@ -703,15 +759,12 @@
                         .style('opacity', 0)
                         .remove();
 
-                    g2 = canvas.selectAll("g.series")
-                        .data(this.data);
-
-                    g2.enter().append("g")
-                        .attr('class', function (d) { return 'series ' + d.key; });
+                    g2 = addBars(this.data);
 
                     g2.call(updateNodes)
                         .call(resizeBars)
                         .call(resizeNodes)
+                        .call(updateLabels)
                         .style('opacity', 0)
                         .transition().duration(500)
                         .style('opacity', 1);
@@ -723,15 +776,12 @@
                         .style('opacity', 0)
                         .remove();
 
-                    g2 = canvas.selectAll("g.series")
-                        .data(this.data);
-
-                    g2.enter().append("g")
-                        .attr('class', function (d) { return 'series ' + d.key; });
+                    g2 = addBars(this.data);
 
                     g2.call(updateNodes)
                         .call(resizeBars) //replace with state transform
                         .call(resizeNodes)
+                        .call(updateLabels)
                         .style('opacity', 0)
                         .transition().duration(500)
                         .call(resizeBars)
@@ -745,15 +795,12 @@
                         .style('opacity', 0)
                         .remove();
 
-                    g2 = canvas.selectAll("g.series")
-                        .data(this.data);
-
-                    g2.enter().append("g")
-                        .attr('class', function (d) { return 'series ' + d.key; });
+                    g2 = addBars(this.data);
 
                     g2.call(updateNodes)
                         .call(resizeBars, true)
                         .call(resizeNodes)
+                        .call(updateLabels)
                         .transition().duration(500)
                         .call(resizeBars);
                 }
