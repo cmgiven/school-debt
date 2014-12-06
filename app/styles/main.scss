@@ -347,6 +347,24 @@ a.label {
         fill: #8b0a35;
       }
     }
+    &.faded {
+      .TOTALREV {
+        .node {
+          fill: #585858;
+          &.highlighted {
+            fill: #999;
+          }
+        }
+      }
+      .TOTALDEBT {
+        .node {
+          fill: #511026;
+          &.highlighted {
+            fill: #8b0a35;
+          }
+        }
+      }
+    }
   }
 }
 
