@@ -856,8 +856,9 @@
             }
 
             function addBars() {
-                return canvas.selectAll('g.series').data(data)
-                    .enter().append('g')
+                var bars = canvas.selectAll('g.series').data(data);
+
+                bars.enter().append('g')
                     .attr('class', function (d) { return 'series ' + d.key; })
                     .each(function (d) {
                         d3.select(this).append('text')
@@ -867,6 +868,8 @@
                             .attr('dy', '-.5em')
                             .attr('dx', d.width / 2);
                     });
+
+                return bars;
             }
 
             function updateNodes(g) {
