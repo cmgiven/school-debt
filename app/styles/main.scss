@@ -369,10 +369,14 @@ a.label {
   }
   .map {
     path {
-      fill: none;
       stroke-width: .5px;
       stroke: #161616;
       stroke: rgba(22,22,22,0.5);
+      cursor: pointer;
+    }
+    &.faded path {
+      opacity: 0.5;
+      &.highlighted { opacity: 1; }
     }
   }
 }

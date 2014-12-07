@@ -592,6 +592,7 @@
 
         drawBackground: function () {
             var owner = this.owner,
+                $el = this.$el,
                 svg = this.svg,
                 margin = {top: 50, right: 30, bottom: 76, left: 30},
                 width = this.$el.width() - margin.left - margin.right,
@@ -618,6 +619,7 @@
                 canvas.selectAll('path')
                     .data(geojson.features)
                     .enter().append('path')
+                    .attr('title', function (d) { return d.properties.NAME; })
                     .attr('d', path)
                     .on('click', function (d) {
                         owner.highlight(this, 'state', undefined);
@@ -629,6 +631,12 @@
                     }).on('mouseout', function () {
                         owner.highlight(this, 'state', undefined);
                     });
+
+                $el.click(function (e) {
+                    if (!owner.globals.animating && e.target.nodeName !== 'path') {
+                        owner.updateSelected('state', 'All States');
+                    }
+                });
             });
         },
 
@@ -645,9 +653,11 @@
                 },
                 quantize = d3.scale.quantize()
                     .domain([0.4, 1.1])
-                    .range(d3.range(7).map(function (i) { return colors[i]; }));
+                    .range(d3.range(7).map(function (i) { return colors[i]; })),
+                duration = owner.globals.animating ? 500 : 0;
 
             this.svg.selectAll('path')
+                .transition().duration(duration)
                 .style('fill', function (d) {
                     var state = d.properties.NAME,
                         year = owner.globals.selected.year,
@@ -657,6 +667,45 @@
                         );
                     return quantize(values.TOTALDEBT / values.TOTALREV);
                 });
+        },
+
+        updateYear: function (initialDraw) {
+            if (!initialDraw) {
+                this.drawData();
+            }
+        },
+
+        updateState: function () {
+            var states = this.svg.selectAll('path'),
+                selectedState = this.owner.globals.selected.state;
+
+            states.classed('highlighted', false);
+
+            if (selectedState === 'All States') {
+                this.svg.classed('faded', false);
+            } else {
+                this.svg.classed('faded', true);
+                states.each(function () {
+                    if ($(this).attr('title') === selectedState) {
+                        d3.select(this).classed('highlighted', true);
+                    }
+                });
+            }
+        },
+
+        highlight: function (key, value) {
+            var states = this.svg.selectAll('path');
+            if (key === 'state' && this.owner.globals.selected.state === 'All States') {
+                this.svg.classed('faded', value);
+                states.classed('highlighted', false);
+                if (value) {
+                    states.each(function () {
+                        if ($(this).attr('title') === value) {
+                            d3.select(this).classed('highlighted', true);
+                        }
+                    });
+                }
+            }
         }
     });
 
@@ -678,6 +727,8 @@
 
         drawBackground: function () {
             var x, y, xAxis, yAxis, canvas,
+                owner = this.owner,
+                $el = this.$el,
                 svg = this.svg,
                 series = this.series,
                 margin = {top: 50, right: 30, bottom: 76, left: 30},
@@ -729,6 +780,12 @@
                 .call(yAxis);
 
             this.canvas = canvas;
+
+            $el.click(function (e) {
+                if (!owner.globals.animating && e.target.nodeName !== 'rect') {
+                    owner.updateSelected('state', 'All States');
+                }
+            });
         },
 
         drawData: function (update) {
