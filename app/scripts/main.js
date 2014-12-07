@@ -37,6 +37,7 @@
 
     app = {
         data: {},
+        mapData: {},
         components: {
             controls: {},
             compare: {},
@@ -54,6 +55,7 @@
             $('#main').fadeIn();
 
             app.data = data;
+            app.mapData = Map.getData();
 
             app.globals.available.years  = _.pluck(data.VALUES, 'YEAR');
             app.globals.available.states = _.pluck(data.STATES, 'STATE');
@@ -64,8 +66,6 @@
             app.components.controls = new Controls('#controls', app);
             app.components.compare  = new LineChart('#compare', app);
             app.components.bars     = new BarTreemap('#bars', app);
-
-            app.mapData = Map.getData();
 
             $(window).resize(function () {
                 app.components.compare.draw();
@@ -128,7 +128,7 @@
             if (value && !app.globals.animating) {
                 var tooltip, entity, parentEntity, values,
                     name, revenue, debt, offset, direction,
-                    position = {}, size = { width: 320, height: 121 },
+                    position = {}, size = { width: 400, height: 121 },
                     $el = $(el),
                     selected = app.globals.selected,
                     year = selected.year,
@@ -155,7 +155,7 @@
 
                 position.left = direction ?
                         offset.left - size.width - 3 :
-                        offset.left + parseInt($el.attr('width'), 10) + 3;
+                        offset.left + 30;
 
                 position.top = offset.top - size.height - 4;
 
@@ -171,6 +171,7 @@
                 tooltip.find('.name').text(name);
                 tooltip.find('.revenue').text(dollarsInMillions(revenue));
                 tooltip.find('.debt').text(dollarsInMillions(debt));
+                tooltip.find('.percentage').text(Math.round(debt / revenue * 100) + "%");
 
                 tooltip.show();
             } else {
@@ -600,20 +601,62 @@
                 .attr('height', height + margin.top + margin.bottom);
 
             owner.mapData.done(function (geojson) {
-                var projection, path;
+                var canvas, projection, path;
+
+                svg.select('g.canvas').remove();
+                canvas = svg.append('g')
+                    .classed('canvas', true)
+                    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
                 projection = d3.geo.albersUsa()
-                    .scale(600)
+                    .scale(height * 2)
                     .translate([width / 2, height / 2]);
 
                 path = d3.geo.path()
                     .projection(projection);
 
-                svg.selectAll('path')
+                canvas.selectAll('path')
                     .data(geojson.features)
-                    .enter().append("path")
-                    .attr("d", path);
+                    .enter().append('path')
+                    .attr('d', path)
+                    .on('click', function (d) {
+                        owner.highlight(this, 'state', undefined);
+                        owner.updateSelected('state', d.properties.NAME);
+                    }).on('mouseover', function (d) {
+                        if (owner.globals.selected.state === 'All States') {
+                            owner.highlight(this, 'state', d.properties.NAME);
+                        }
+                    }).on('mouseout', function () {
+                        owner.highlight(this, 'state', undefined);
+                    });
             });
+        },
+
+        drawData: function () {
+            var owner = this.owner,
+                colors = {
+                    0: '#999',
+                    1: '#978188',
+                    2: '#946a78',
+                    3: '#925167',
+                    4: '#903956',
+                    5: '#8d2145',
+                    6: '#8b0a35'
+                },
+                quantize = d3.scale.quantize()
+                    .domain([0.4, 1.1])
+                    .range(d3.range(7).map(function (i) { return colors[i]; }));
+
+            this.svg.selectAll('path')
+                .style('fill', function (d) {
+                    var state = d.properties.NAME,
+                        year = owner.globals.selected.year,
+                        values = _.find(
+                            _.find(owner.data.STATES, { 'STATE': state }).VALUES,
+                            { 'YEAR': year }
+                        );
+                    return quantize(values.TOTALDEBT / values.TOTALREV);
+                });
         }
     });
 
@@ -782,12 +825,13 @@
                             return 'node'
                                 + (c.depth === 0 ? ' parent' : '')
                                 + (national ? ' state' : '');
-                        })
-                        .attr('title', function (c) { return national ? c.STATE : c.ID; });
+                        });
+
+                    node.attr('title', function (c) { return national ? c.STATE : c.ID; });
 
                     if (national) {
                         node.on('click', function (d) {
-                            owner.highlight('state', undefined);
+                            owner.highlight(this, 'state', undefined);
                             owner.updateSelected('state', d.STATE);
                         });
                     }

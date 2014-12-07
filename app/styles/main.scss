@@ -370,7 +370,9 @@ a.label {
   .map {
     path {
       fill: none;
-      stroke: #999;
+      stroke-width: .5px;
+      stroke: #161616;
+      stroke: rgba(22,22,22,0.5);
     }
   }
 }
@@ -402,13 +404,21 @@ body:not(.animating) .line-chart .year.selected, .line-chart .year:hover {
   h3 {
     margin: 0;
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 800;
     white-space: nowrap;
   }
   ul {
     padding: 0;
     margin: 0;
     li { display: block; }
+  }
+  span.percentage {
+    font-weight: 800;
+    color: #8b0a35;
+    font-size: 49px;
+    position: absolute;
+    right: 22px;
+    top: 59px;
   }
 }
 
