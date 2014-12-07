@@ -632,7 +632,7 @@
                         owner.highlight(this, 'state', undefined);
                     });
 
-                $el.click(function (e) {
+                $el.find('svg').click(function (e) {
                     if (!owner.globals.animating &&
                             owner.globals.selected.state !== 'All States' &&
                             e.target.nodeName !== 'path') {
@@ -783,8 +783,10 @@
 
             this.canvas = canvas;
 
-            $el.click(function (e) {
-                if (!owner.globals.animating && e.target.nodeName !== 'rect') {
+            $el.find('svg').click(function (e) {
+                if (!owner.globals.animating &&
+                        owner.globals.selected.state !== 'All States' &&
+                        e.target.nodeName !== 'rect') {
                     owner.updateSelected('state', 'All States');
                 }
             });
