@@ -137,11 +137,13 @@
 
                 if (national) {
                     entity = _.find(app.data.STATES, { 'STATE': value });
+                    if (!entity) { return; }
                     values = _.find(entity.VALUES, { 'YEAR': year });
                     name = value;
                 } else {
                     parentEntity = _.find(app.data.STATES, { 'STATE': state });
                     entity = _.find(parentEntity.LEAS, { 'ID': value });
+                    if (!entity) { return; }
                     values = _.find(entity.VALUES, { 'YEAR': year });
                     name = entity.NAME;
                 }
@@ -793,7 +795,8 @@
         },
 
         drawData: function (update) {
-            var g1, g2, max,
+            var g1, g2, parentNodes, max,
+                data = this.data,
                 height = this.height,
                 canvas = this.canvas,
                 x = this.x,
@@ -819,7 +822,7 @@
 
                 y.domain([0, max]);
 
-                this.data = _.map(this.series, function (value, key) {
+                data = _.map(this.series, function (value, key) {
                     var treemap = d3.layout.treemap()
                             .sticky(national)
                             .ratio(2),
@@ -848,28 +851,23 @@
                         }
                     };
                 });
+
+                this.data = data;
             }
 
-            function addBars(data) {
-                var g = canvas.selectAll('g.series')
-                    .data(data);
-
-                g.enter().append('g')
-                    .attr('class', function (d) { return 'series ' + d.key; });
-
-                g.each(function (d) {
-                    d3.select(this).append('text')
-                        .datum(d)
-                        .attr('class', 'label')
-                        .attr('text-anchor', 'middle')
-                        .attr('dy', '-.5em')
-                        .attr('dx', d.width / 2);
-                });
-
-                return g;
+            function addBars() {
+                return canvas.selectAll('g.series').data(data)
+                    .enter().append('g')
+                    .attr('class', function (d) { return 'series ' + d.key; })
+                    .each(function (d) {
+                        d3.select(this).append('text')
+                            .datum(d)
+                            .attr('class', 'label')
+                            .attr('text-anchor', 'middle')
+                            .attr('dy', '-.5em')
+                            .attr('dx', d.width / 2);
+                    });
             }
-
-            g1 = addBars(this.data);
 
             function updateNodes(g) {
                 g.each(function (d) {
@@ -909,6 +907,16 @@
                 return g;
             }
 
+            function getParentNodes(g, state) {
+                var nodes = {};
+
+                g.each(function (d) {
+                    nodes[d.key] = _.find(d.children, { 'STATE': state });
+                });
+
+                return nodes;
+            }
+
             function resizeBars(g, zero) {
                 g.attr('transform', function (d) {
                     if (zero) {
@@ -916,6 +924,18 @@
                     }
 
                     return 'translate(' + d.offsetLeft + ',' + d.offsetTop + ')';
+                });
+                return g;
+            }
+
+            function resizeToFit(g, parentNodes) {
+                g.attr('transform', function (d) {
+                    var parentNode = parentNodes[d.key];
+                    return 'translate(' +
+                        (parentNode.parent.offsetLeft + parentNode.x) + ',' +
+                        (parentNode.parent.offsetTop + parentNode.y) + ') scale(' +
+                        (parentNode.dx / d.dx) + ' ' +
+                        (parentNode.dy / d.dy) + ')';
                 });
                 return g;
             }
@@ -957,7 +977,8 @@
             }
 
             if (update !== 'state' || state === this.last.state) {
-                g1.call(updateNodes)
+                addBars()
+                    .call(updateNodes)
                     .transition().duration(tDuration)
                     .ease(animating ? 'linear' : 'cubic-in-out')
                     .call(resizeBars)
@@ -967,32 +988,42 @@
             } else {
                 if (national) {
                     //zoom out from a state
-                    g1.classed('series', false)
-                        .transition().duration(500) //add state transform
-                        .style('opacity', 0)
-                        .remove();
+                    g1 = canvas.selectAll('g.series');
 
-                    g2 = addBars(this.data);
+                    g1.classed('series', false);
 
-                    g2.call(updateNodes)
+                    g2 = addBars()
+                        .call(updateNodes)
                         .call(resizeBars)
                         .call(resizeNodes)
                         .call(updateLabels)
-                        .style('opacity', 0)
-                        .transition().duration(500)
+                        .style('opacity', 0);
+
+                    parentNodes = getParentNodes(g2, this.last.state);
+
+                    g1.selectAll('.label').remove();
+
+                    g1.transition().duration(500)
+                        .call(resizeToFit, parentNodes)
+                        .remove();
+
+                    g2.transition().duration(500)
                         .style('opacity', 1);
 
                 } else if (this.last.state === 'All States') {
                     //zoom in to a state
+                    g1 = canvas.selectAll('g.series');
+
+                    parentNodes = getParentNodes(g1, state);
+
                     g1.classed('series', false)
                         .transition().duration(500)
                         .style('opacity', 0)
                         .remove();
 
-                    g2 = addBars(this.data);
-
-                    g2.call(updateNodes)
-                        .call(resizeBars) //replace with state transform
+                    addBars()
+                        .call(updateNodes)
+                        .call(resizeToFit, parentNodes)
                         .call(resizeNodes)
                         .call(updateLabels)
                         .style('opacity', 0)
@@ -1002,15 +1033,15 @@
 
                 } else {
                     //jumping between states, hide and show
-                    g1.classed('series', false)
+                    canvas.selectAll('g.series')
+                        .classed('series', false)
                         .transition().duration(500)
                         .call(resizeBars, true)
                         .style('opacity', 0)
                         .remove();
 
-                    g2 = addBars(this.data);
-
-                    g2.call(updateNodes)
+                    addBars()
+                        .call(updateNodes)
                         .call(resizeBars, true)
                         .call(resizeNodes)
                         .call(updateLabels)
