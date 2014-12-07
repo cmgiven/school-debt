@@ -65,7 +65,7 @@
             app.components.compare  = new LineChart('#compare', app);
             app.components.bars     = new BarTreemap('#bars', app);
 
-            Map.cacheData();
+            Map.getData();
 
             $(window).resize(function () {
                 app.components.compare.draw();
@@ -344,7 +344,7 @@
 
     Exhibit.prototype = {
         classed: 'exhibit',
-        title: $('<h2>Exhibit<h2>'),
+        title: $('<h2>Exhibit</h2>'),
 
         drawBackground: function () { return; },
         drawData: function () { return; },
@@ -385,7 +385,7 @@
 
     LineChart = Exhibit.create({
         classed: 'line-chart',
-        title: $('<h2><span class="replace state"></span> debt as a share of annual revenue<h2>'),
+        title: $('<h2><span class="replace state"></span> debt as a share of annual revenue</h2>'),
 
         drawBackground: function () {
             var x, y, xAxis, yAxis, canvas,
@@ -587,19 +587,47 @@
 
     Map = Exhibit.create({
         classed: 'map',
-        title: $('<h2>debt as a share of annual revenue, <span class="replace year"></span><h2>')
+        title: $('<h2>debt as a share of annual revenue, <span class="replace year"></span></h2>'),
+
+        drawBackground: function () {
+            console.log(this.$el.width());
+            var svg = this.svg,
+                margin = {top: 50, right: 30, bottom: 76, left: 30},
+                width = this.$el.width() - margin.left - margin.right,
+                height = this.$el.height() - margin.top - margin.bottom;
+
+            svg.attr('width', width + margin.left + margin.right)
+                .attr('height', height + margin.top + margin.bottom);
+
+            Map.getData(function (geojson) {
+                var projection, path;
+
+                projection = d3.geo.albersUsa()
+                    .scale(600)
+                    .translate([width / 2, height / 2]);
+
+                path = d3.geo.path()
+                    .projection(projection);
+
+                svg.selectAll('path')
+                    .data(geojson.features)
+                    .enter().append("path")
+                    .attr("d", path);
+            });
+        }
     });
 
-    Map.cacheData = function () {
+    Map.getData = function (callback) {
         $.ajax({
             url: MAP_PATH,
-            dataType: 'json'
+            dataType: 'json',
+            success: callback
         });
     };
 
     BarTreemap = Exhibit.create({
         classed: 'bar-treemap',
-        title: $('<h2><span class="replace state"></span> revenue and debt totals, <span class="replace year"></span><h2>'),
+        title: $('<h2><span class="replace state"></span> revenue and debt totals, <span class="replace year"></span></h2>'),
 
         series: {
             'TOTALREV': 'Annual Revenue',
