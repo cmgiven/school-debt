@@ -633,7 +633,9 @@
                     });
 
                 $el.click(function (e) {
-                    if (!owner.globals.animating && e.target.nodeName !== 'path') {
+                    if (!owner.globals.animating &&
+                            owner.globals.selected.state !== 'All States' &&
+                            e.target.nodeName !== 'path') {
                         owner.updateSelected('state', 'All States');
                     }
                 });
