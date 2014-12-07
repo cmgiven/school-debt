@@ -36,6 +36,10 @@ h1 {
   line-height: 1.1em
 }
 
+strong {
+  font-weight: 800;
+}
+
 #compare {
   height: 300px;
 }
@@ -79,11 +83,22 @@ h1 {
 }
 
 #main {
-  padding-bottom: 50px;
+  position: relative;
+  padding-bottom: 92px;
   display: none;
 
   #description {
     clear: both;
+  }
+
+  #notes {
+    position: absolute;
+    bottom: 0;
+    font-size: 12px;
+    line-height: 1.2em;
+    padding: 0 30px;
+    color: #999;
+    a { text-decoration: underline; }
   }
 }
 
