@@ -65,7 +65,7 @@
             app.components.compare  = new LineChart('#compare', app);
             app.components.bars     = new BarTreemap('#bars', app);
 
-            Map.getData();
+            app.mapData = Map.getData();
 
             $(window).resize(function () {
                 app.components.compare.draw();
@@ -590,8 +590,8 @@
         title: $('<h2>debt as a share of annual revenue, <span class="replace year"></span></h2>'),
 
         drawBackground: function () {
-            console.log(this.$el.width());
-            var svg = this.svg,
+            var owner = this.owner,
+                svg = this.svg,
                 margin = {top: 50, right: 30, bottom: 76, left: 30},
                 width = this.$el.width() - margin.left - margin.right,
                 height = this.$el.height() - margin.top - margin.bottom;
@@ -599,7 +599,7 @@
             svg.attr('width', width + margin.left + margin.right)
                 .attr('height', height + margin.top + margin.bottom);
 
-            Map.getData(function (geojson) {
+            owner.mapData.done(function (geojson) {
                 var projection, path;
 
                 projection = d3.geo.albersUsa()
@@ -617,11 +617,10 @@
         }
     });
 
-    Map.getData = function (callback) {
-        $.ajax({
+    Map.getData = function () {
+        return $.ajax({
             url: MAP_PATH,
-            dataType: 'json',
-            success: callback
+            dataType: 'json'
         });
     };
 
